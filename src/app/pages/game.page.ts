@@ -8,7 +8,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
             <iframe
                 [src]="safe_url()"
                 class="h-full w-full border-0"
-                title="2048 game"
+                title="Simon Says game"
             ></iframe>
         </div>
     `,
@@ -26,6 +26,6 @@ export class GamePage {
     private readonly _sanitizer = inject(DomSanitizer);
 
     readonly safe_url = computed<SafeResourceUrl>(() =>
-        this._sanitizer.bypassSecurityTrustResourceUrl('./games/2048/index.html'),
+        this._sanitizer.bypassSecurityTrustResourceUrl('./games/simon/index.html'),
     );
 }
