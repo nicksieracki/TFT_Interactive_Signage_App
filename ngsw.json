@@ -1,0 +1,65 @@
+{
+  "configVersion": 1,
+  "timestamp": 1780596540171,
+  "index": "./index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "./favicon.ico",
+        "./index.html",
+        "./main-R6CFXJER.js",
+        "./styles-QF4OL7OC.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "./media/material-symbols-outlined-EWM62JAJ.woff2",
+        "./media/material-symbols-rounded-O2WJTDKO.woff2",
+        "./media/material-symbols-sharp-4TUTEVOQ.woff2"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "./favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
+    "./index.html": "72db2ea023827630680237cebd1d5157c1f4ae83",
+    "./main-R6CFXJER.js": "d4c83a2e4dc0af7830c4cc003c7ca01dad36f151",
+    "./media/material-symbols-outlined-EWM62JAJ.woff2": "3df48979f156a25fcd9afbb37e3d289f211b43da",
+    "./media/material-symbols-rounded-O2WJTDKO.woff2": "1c0aa57682c77424a77a299fef53b50457c6712a",
+    "./media/material-symbols-sharp-4TUTEVOQ.woff2": "c92009b741174cb9e27ad0d410b59b1759d6f734",
+    "./styles-QF4OL7OC.css": "f267145a9b232b2b37449b1398bc6b53f33b06a6"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
