@@ -88,11 +88,11 @@ jobs:
               run: bun install --frozen-lockfile
 
             - name: Run unit tests
-              run: bun test
+              run: bun run test -- --watch=false
 
     build:
         runs-on: ubuntu-latest
-        needs: setup
+        needs: [setup, test]
         env:
             deploy_branch: ${{ needs.setup.outputs.deploy_branch }}
             short_sha: ${{ needs.setup.outputs.short_sha }}
