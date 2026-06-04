@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <title>Simon Says</title>
+        <link rel="stylesheet" href="./style.css" />
+    </head>
+    <body>
+        <main class="game-shell">
+            <section class="top-bar" aria-live="polite">
+                <div>
+                    <p class="eyebrow">Game</p>
+                    <h1>Simon Says</h1>
+                </div>
+                <div class="score-strip">
+                    <div class="score-box">
+                        <span>Level</span>
+                        <strong id="level">0</strong>
+                    </div>
+                    <div class="score-box">
+                        <span>Best</span>
+                        <strong id="best">0</strong>
+                    </div>
+                </div>
+            </section>
+
+            <section class="board-wrap" aria-label="Simon Says game board">
+                <div class="board" id="board">
+                    <button class="pad pad-green" data-pad="0" aria-label="Green"></button>
+                    <button class="pad pad-red" data-pad="1" aria-label="Red"></button>
+                    <button class="pad pad-yellow" data-pad="2" aria-label="Yellow"></button>
+                    <button class="pad pad-blue" data-pad="3" aria-label="Blue"></button>
+                    <div class="center-panel">
+                        <p id="status">Tap Start</p>
+                        <button id="start" type="button">Start</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bottom-bar">
+                <button id="reset" type="button" class="secondary">Reset</button>
+                <button id="sound" type="button" class="secondary" aria-pressed="true">Sound On</button>
+            </section>
+        </main>
+        <script src="./game.js"></script>
+    </body>
+</html>
