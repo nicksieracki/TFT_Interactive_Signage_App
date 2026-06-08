@@ -36,6 +36,21 @@ ng build
 
 This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
 
+## Menu Content URLs
+
+The bottom menu includes Events and Instagram pages. Configure their iframe URLs in
+the PlaceOS `wayfinder_app` metadata:
+
+```json
+{
+    "events_url": "https://example.com/events/embed",
+    "instagram_url": "https://example.com/instagram-feed/embed"
+}
+```
+
+Use embeddable URLs for these values. Direct Instagram profile pages often block
+being loaded inside an iframe.
+
 ## Running unit tests
 
 To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
