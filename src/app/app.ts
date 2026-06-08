@@ -12,7 +12,6 @@ import { SystemService } from './services/system.service';
 import { SignagePlayer } from './signage-player';
 
 const OSK_STORAGE_KEY = 'signage-wayfinder:osk';
-const DIRECTORY_URL = 'https://www.tft.ucla.edu/about/faculty/';
 
 @Component({
     selector: 'app-root',
@@ -45,16 +44,16 @@ const DIRECTORY_URL = 'https://www.tft.ucla.edu/about/faculty/';
                         <icon class="text-3xl">arrow_back</icon>
                     </button>
                 }
-                <a
+                <button
                     matRipple
-                    [href]="directory_url"
-                    target="_self"
+                    [routerLink]="directory_link()"
+                    routerLinkActive="bg-[#038AED] text-white shadow-[0_8px_24px_rgba(3,138,237,0.35)]"
                     class="flex h-14 min-w-[4.75rem] flex-col items-center justify-center gap-0.5 rounded-md px-2 py-1 text-white/80 hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-[#FFD100] focus-visible:outline-none sm:h-15 sm:min-w-24 sm:px-3"
-                    aria-label="Open TFT faculty directory"
+                    [attr.aria-current]="active_tab() === 'directory' ? 'page' : null"
                 >
                     <icon class="text-3xl">list_alt</icon>
                     <span class="text-[0.7rem] font-medium sm:text-xs">Directory</span>
-                </a>
+                </button>
                 <button
                     matRipple
                     [routerLink]="wayfinding_link()"
@@ -117,7 +116,6 @@ export class App implements OnInit {
     protected readonly title = signal('signage-wayfinder');
     protected readonly ready = this._placeos.ready;
     protected readonly system = this._system.system;
-    protected readonly directory_url = DIRECTORY_URL;
 
     protected readonly active_tab = toSignal(
         this._router.events.pipe(
@@ -139,6 +137,11 @@ export class App implements OnInit {
     protected readonly signage_link = computed(() => {
         const sys = this._system.system();
         return sys ? ['/', sys] : ['/'];
+    });
+
+    protected readonly directory_link = computed(() => {
+        const sys = this._system.system();
+        return sys ? ['/', sys, 'directory'] : ['/directory'];
     });
 
     protected readonly wayfinding_link = computed(() => {
