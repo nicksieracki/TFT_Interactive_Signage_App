@@ -40,12 +40,17 @@ export class IdleService {
         this._destroy.onDestroy(() => this.stop());
     }
 
+    activity(): void {
+        if (this._started) this._reset();
+    }
+
     start(): void {
         if (this._started) return;
         this._started = true;
         for (const event of IDLE_EVENTS) {
             document.addEventListener(event, this._reset, { passive: true });
         }
+        window.addEventListener('blur', this._reset, { passive: true });
         this._reset();
     }
 
@@ -59,6 +64,7 @@ export class IdleService {
         for (const event of IDLE_EVENTS) {
             document.removeEventListener(event, this._reset);
         }
+        window.removeEventListener('blur', this._reset);
     }
 
     private _onIdle(): void {

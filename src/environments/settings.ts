@@ -11,6 +11,12 @@ export interface AppSettings {
     app: {
         name: string;
         signage_url: string;
+        /** Embeddable directory URL */
+        directory_url: string;
+        /** Embeddable events calendar/feed URL */
+        events_url: string;
+        /** Embeddable Instagram feed URL */
+        instagram_url: string;
         /** Delay in seconds before returning to signage from any sub-route */
         idle_timeout_secs: number;
         /** Google Maps Embed API key */
@@ -39,7 +45,10 @@ export const DEFAULT_SETTINGS: AppSettings = {
     app: {
         name: 'Signage Wayfinder',
         signage_url: 'https://placeos-nonprod.avit.it.ucla.edu/signage',
-        idle_timeout_secs: 60,
+        directory_url: 'https://www.tft.ucla.edu/about/faculty/',
+        events_url: 'https://www.tft.ucla.edu/events/',
+        instagram_url: 'https://www.instagram.com/ucla_tft/?hl=en',
+        idle_timeout_secs: 30,
         maps_api_key: '',
         places_api_key: '',
         default_location: '',

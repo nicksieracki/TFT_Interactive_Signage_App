@@ -28,7 +28,19 @@ import { IconComponent } from './icon.component';
                 <span class="tile-sub">Navigate the building</span>
             </button>
 
-            <button type="button" (click)="navigateTo(game_link())" class="tile tile--3">
+            <button type="button" (click)="navigateTo(events_link())" class="tile tile--3">
+                <icon class="tile-icon">event</icon>
+                <span class="tile-label">Events</span>
+                <span class="tile-sub">What&apos;s happening</span>
+            </button>
+
+            <button type="button" (click)="navigateTo(instagram_link())" class="tile tile--4">
+                <icon class="tile-icon">photo_camera</icon>
+                <span class="tile-label">Instagram</span>
+                <span class="tile-sub">Latest posts</span>
+            </button>
+
+            <button type="button" (click)="navigateTo(game_link())" class="tile tile--5">
                 <icon class="tile-icon">sports_esports</icon>
                 <span class="tile-label">Game</span>
                 <span class="tile-sub">Take a break</span>
@@ -187,8 +199,10 @@ import { IconComponent } from './icon.component';
             }
 
             .tile--1 { animation-delay: 0ms; }
-            .tile--2 { animation-delay: 90ms; }
-            .tile--3 { animation-delay: 180ms; }
+            .tile--2 { animation-delay: 70ms; }
+            .tile--3 { animation-delay: 140ms; }
+            .tile--4 { animation-delay: 210ms; }
+            .tile--5 { animation-delay: 280ms; }
 
             /* ── Exit animations ───────────────────────────── */
 
@@ -204,9 +218,11 @@ import { IconComponent } from './icon.component';
                 animation: tile-out 260ms ease-in forwards;
             }
 
-            :host.closing .tile--1 { animation-delay: 80ms; }
-            :host.closing .tile--2 { animation-delay: 40ms; }
-            :host.closing .tile--3 { animation-delay: 0ms; }
+            :host.closing .tile--1 { animation-delay: 160ms; }
+            :host.closing .tile--2 { animation-delay: 120ms; }
+            :host.closing .tile--3 { animation-delay: 80ms; }
+            :host.closing .tile--4 { animation-delay: 40ms; }
+            :host.closing .tile--5 { animation-delay: 0ms; }
 
             /* ── Keyframes ─────────────────────────────────── */
 
@@ -260,6 +276,16 @@ export class TileMenuComponent {
     protected readonly wayfinding_link = computed(() => {
         const sys = this._system.system();
         return sys ? ['/', sys, 'wayfinding'] : ['/wayfinding'];
+    });
+
+    protected readonly events_link = computed(() => {
+        const sys = this._system.system();
+        return sys ? ['/', sys, 'events'] : ['/events'];
+    });
+
+    protected readonly instagram_link = computed(() => {
+        const sys = this._system.system();
+        return sys ? ['/', sys, 'instagram'] : ['/instagram'];
     });
 
     protected readonly game_link = computed(() => {

@@ -66,7 +66,7 @@ export class App implements OnInit {
 
     protected readonly menu_open = signal(false);
 
-    private readonly _active_tab = toSignal(
+    protected readonly active_tab = toSignal(
         this._router.events.pipe(
             filter((e): e is NavigationEnd => e instanceof NavigationEnd),
             map((e) => {
@@ -80,12 +80,11 @@ export class App implements OnInit {
     );
 
     protected readonly hide_signage = computed(() =>
-        ['directory', 'wayfinding', 'game'].includes(this._active_tab()),
+        ['directory', 'wayfinding', 'events', 'instagram', 'game'].includes(this.active_tab()),
     );
 
     constructor() {
         this._initVirtualKeyboard();
-        // Close menu when idle returns to signage so user must tap again
         effect(() => {
             if (!this.hide_signage()) this.menu_open.set(false);
         });

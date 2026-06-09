@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { filter, map, startWith } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 import { SystemService } from '../services/system.service';
 import { IconComponent } from './icon.component';
@@ -12,18 +12,18 @@ import { IconComponent } from './icon.component';
     template: `
         <svg class="filters" aria-hidden="true">
             <defs>
-                <filter id="tile-squish" x="-15%" y="-15%" width="130%" height="130%">
+                <filter id="tile-squish" x="-20%" y="-20%" width="140%" height="140%">
                     <feTurbulence
-                        type="fractalNoise"
-                        baseFrequency="0.65"
-                        numOctaves="3"
-                        seed="8"
+                        type="turbulence"
+                        baseFrequency="0.03"
+                        numOctaves="1"
+                        seed="4"
                         result="noise"
                     />
                     <feDisplacementMap
                         in="SourceGraphic"
                         in2="noise"
-                        scale="8"
+                        scale="0.5"
                         xChannelSelector="R"
                         yChannelSelector="G"
                     />
@@ -59,6 +59,24 @@ import { IconComponent } from './icon.component';
             >
                 <icon class="text-4xl">explore</icon>
                 <span>Wayfinding</span>
+            </a>
+            <a
+                [routerLink]="events_link()"
+                routerLinkActive="tile--active"
+                class="tile"
+                [attr.aria-current]="active_tab() === 'events' ? 'page' : null"
+            >
+                <icon class="text-4xl">event</icon>
+                <span>Events</span>
+            </a>
+            <a
+                [routerLink]="instagram_link()"
+                routerLinkActive="tile--active"
+                class="tile"
+                [attr.aria-current]="active_tab() === 'instagram' ? 'page' : null"
+            >
+                <icon class="text-4xl">photo_camera</icon>
+                <span>Instagram</span>
             </a>
             <a
                 [routerLink]="game_link()"
@@ -112,14 +130,14 @@ import { IconComponent } from './icon.component';
                 outline: none;
                 -webkit-tap-highlight-color: transparent;
 
-                background: rgba(3, 18, 30, 0.65);
-                backdrop-filter: blur(28px) saturate(160%);
-                -webkit-backdrop-filter: blur(28px) saturate(160%);
-                border: 1px solid rgba(255, 255, 255, 0.13);
+                background: rgba(3, 18, 30, 0.45);
+                backdrop-filter: blur(48px) saturate(200%);
+                -webkit-backdrop-filter: blur(48px) saturate(200%);
+                border: 1px solid rgba(255, 255, 255, 0.2);
                 box-shadow:
                     0 14px 44px rgba(0, 11, 19, 0.55),
-                    inset 0 1.5px 0 rgba(255, 255, 255, 0.14),
-                    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+                    inset 0 1.5px 0 rgba(255, 255, 255, 0.28),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.25);
 
                 transition:
                     transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1),
@@ -135,8 +153,8 @@ import { IconComponent } from './icon.component';
             }
 
             .tile:hover {
-                background: rgba(255, 255, 255, 0.08);
-                border-color: rgba(255, 255, 255, 0.2);
+                background: rgba(10, 36, 56, 0.88);
+                border-color: rgba(255, 255, 255, 0.22);
                 color: #fff;
             }
 
@@ -156,10 +174,10 @@ import { IconComponent } from './icon.component';
             }
 
             .tile--active {
-                background: rgba(3, 138, 237, 0.3);
-                border-color: rgba(3, 138, 237, 0.52);
+                background: rgba(39, 116, 174, 0.55);
+                border-color: rgba(39, 116, 174, 0.8);
                 box-shadow:
-                    0 8px 30px rgba(3, 138, 237, 0.28),
+                    0 8px 30px rgba(39, 116, 174, 0.4),
                     inset 0 1.5px 0 rgba(255, 255, 255, 0.18),
                     inset 0 -1px 0 rgba(0, 0, 0, 0.1);
                 color: #fff;
@@ -167,8 +185,12 @@ import { IconComponent } from './icon.component';
 
             .tile--back {
                 width: 100px;
-                background: rgba(255, 255, 255, 0.05);
-                border-color: rgba(255, 255, 255, 0.08);
+                border-color: rgba(255, 255, 255, 0.28);
+                box-shadow: none;
+            }
+
+            .tile--back:hover {
+                border-color: rgba(255, 255, 255, 0.45);
             }
         `,
     ],
@@ -177,21 +199,22 @@ export class TileNavComponent {
     private readonly _router = inject(Router);
     private readonly _system = inject(SystemService);
 
+    private _tabFromUrl(url: string): string {
+        const path = url.split('?')[0].replace(/^\//, '');
+        const segments = path.split('/').filter(Boolean);
+        return segments[segments.length - 1] ?? '';
+    }
+
     protected readonly active_tab = toSignal(
         this._router.events.pipe(
             filter((e): e is NavigationEnd => e instanceof NavigationEnd),
-            map((e) => {
-                const path = e.urlAfterRedirects.split('?')[0].replace(/^\//, '');
-                const segments = path.split('/').filter(Boolean);
-                return segments[segments.length - 1] ?? '';
-            }),
-            startWith(''),
+            map((e) => this._tabFromUrl(e.urlAfterRedirects)),
         ),
-        { initialValue: '' },
+        { initialValue: this._tabFromUrl(this._router.url) },
     );
 
     protected readonly hide_signage = computed(() =>
-        ['directory', 'wayfinding', 'game'].includes(this.active_tab()),
+        ['directory', 'wayfinding', 'events', 'instagram', 'game'].includes(this.active_tab()),
     );
 
     protected readonly signage_link = computed(() => {
@@ -207,6 +230,16 @@ export class TileNavComponent {
     protected readonly wayfinding_link = computed(() => {
         const sys = this._system.system();
         return sys ? ['/', sys, 'wayfinding'] : ['/wayfinding'];
+    });
+
+    protected readonly events_link = computed(() => {
+        const sys = this._system.system();
+        return sys ? ['/', sys, 'events'] : ['/events'];
+    });
+
+    protected readonly instagram_link = computed(() => {
+        const sys = this._system.system();
+        return sys ? ['/', sys, 'instagram'] : ['/instagram'];
     });
 
     protected readonly game_link = computed(() => {
