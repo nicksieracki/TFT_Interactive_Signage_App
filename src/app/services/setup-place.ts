@@ -17,8 +17,10 @@ export async function setupPlace(settings: PlaceSettings): Promise<void> {
     const host_with_port = `${host}${port ? ':' + port : ''}`;
     const url = settings.use_domain ? `${protocol}//${host_with_port}` : location.origin;
     const route = (location.pathname + '/').replace('//', '/');
+    const is_local = ['localhost', '127.0.0.1', '::1'].includes(location.hostname);
     const mock =
         settings.mock ||
+        is_local ||
         location.href.includes('mock=true') ||
         localStorage.getItem('mock') === 'true';
 
