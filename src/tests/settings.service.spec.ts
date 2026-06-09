@@ -26,7 +26,7 @@ describe('SettingsService', () => {
 
     it('returns default settings via get()', () => {
         expect(service.get<string>('app.name')).toBe('Signage Wayfinder');
-        expect(service.get<number>('app.idle_timeout_secs')).toBe(60);
+        expect(service.get<number>('app.idle_timeout_secs')).toBe(30);
         expect(service.get<string>('composer.route')).toBe('/signage-wayfinder');
     });
 
