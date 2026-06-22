@@ -38,17 +38,20 @@ This will compile your project and store the build artifacts in the `dist/` dire
 
 ## Menu Content URLs
 
-The bottom menu includes Events and Instagram pages. Configure their iframe URLs in
-the PlaceOS `wayfinder_app` metadata:
+The bottom menu includes fixed Directory and Events pages for TFT content:
+
+- Directory: `https://www.tft.ucla.edu/about/faculty/`
+- Events: `https://www.tft.ucla.edu/events/`
+
+Configure the Instagram iframe URL in the PlaceOS `wayfinder_app` metadata:
 
 ```json
 {
-    "events_url": "https://example.com/events/embed",
     "instagram_url": "https://example.com/instagram-feed/embed"
 }
 ```
 
-Use embeddable URLs for these values. Direct Instagram profile pages often block
+Use an embeddable URL for this value. Direct Instagram profile pages often block
 being loaded inside an iframe.
 
 ## Running unit tests

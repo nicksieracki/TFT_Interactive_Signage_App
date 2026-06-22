@@ -11,8 +11,6 @@ export interface AppSettings {
     app: {
         name: string;
         signage_url: string;
-        /** Embeddable events calendar/feed URL */
-        events_url: string;
         /** Embeddable Instagram feed URL */
         instagram_url: string;
         /** Delay in seconds before returning to signage from any sub-route */
@@ -43,7 +41,6 @@ export const DEFAULT_SETTINGS: AppSettings = {
     app: {
         name: 'Signage Wayfinder',
         signage_url: 'https://placeos-nonprod.avit.it.ucla.edu/signage',
-        events_url: '',
         instagram_url: '',
         idle_timeout_secs: 60,
         maps_api_key: '',
