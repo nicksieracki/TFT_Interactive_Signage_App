@@ -19,25 +19,18 @@ export const useInstagramSlides = (systemId?: string) => {
       return;
     }
 
-    let binding: any = null;
+    let subscription: any = null;
 
     try {
       // Get the Instagram module and bind to its slides state
       const module = getModule(systemId, 'Instagram_1');
-      binding = module.binding('slides');
+      const binding = module.binding('slides');
 
-      const subscription = binding.bind();
-
-      subscription.listen((value: Slide[]) => {
+      // Subscribe to the binding - this will automatically bind and listen
+      subscription = binding.subscribe((value: Slide[]) => {
         setSlides(value || []);
         setIsConnected(true);
         setError(null);
-      });
-
-      subscription.onError((err: Error) => {
-        console.error('Instagram binding error:', err);
-        setError(err.message || 'Failed to connect to Instagram driver');
-        setIsConnected(false);
       });
 
     } catch (err) {
@@ -47,12 +40,12 @@ export const useInstagramSlides = (systemId?: string) => {
     }
 
     return () => {
-      // Cleanup binding on unmount
-      if (binding) {
+      // Cleanup subscription on unmount
+      if (subscription) {
         try {
-          binding.unbind();
+          subscription.unsubscribe();
         } catch (err) {
-          console.error('Error unbinding Instagram slides:', err);
+          console.error('Error unsubscribing from Instagram slides:', err);
         }
       }
     };
