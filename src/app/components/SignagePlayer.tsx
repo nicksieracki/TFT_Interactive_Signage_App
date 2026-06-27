@@ -17,8 +17,8 @@ export const SignagePlayer: React.FC<SignagePlayerProps> = ({ hide = false }) =>
   const embedUrl = useMemo(() => {
     const base = signageUrl.replace(/\/$/, '');
     return system
-      ? `${base}/#/${encodeURIComponent(system)}`
-      : `${base}/#/`;
+      ? `${base}/#/signage/${encodeURIComponent(system)}`
+      : `${base}/#/signage`;
   }, [signageUrl, system]);
 
   useEffect(() => {
@@ -30,11 +30,9 @@ export const SignagePlayer: React.FC<SignagePlayerProps> = ({ hide = false }) =>
 
   if (!system) {
     return (
-      <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-8 bg-gradient-to-br from-gray-900/20 via-black to-gray-800/20">
-        <Icon className="text-8xl text-gray-400">desktop_access_disabled</Icon>
-        <p className="text-2xl font-semibold text-gray-300">System ID Required</p>
-        <p className="text-gray-400">Signage requires a system ID to display content</p>
-        <p className="text-sm text-gray-500 mt-2">Example: #/system_id</p>
+      <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-8 opacity-30">
+        <Icon className="text-8xl">desktop_access_disabled</Icon>
+        <p>Signage is not configured for this display.</p>
       </div>
     );
   }

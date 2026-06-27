@@ -11,6 +11,7 @@ import { DirectoryPage } from './pages/DirectoryPage';
 import { EventsPage } from './pages/EventsPage';
 import { GamePage } from './pages/GamePage';
 import { InstagramPage } from './pages/InstagramPage';
+import { SignagePage } from './pages/SignagePage';
 import { WayfindingPage } from './pages/WayfindingPage';
 
 // Define valid pages as a constant for cleaner logic
@@ -208,7 +209,7 @@ const AppContent: React.FC = () => {
       <div className={`absolute inset-0 z-10 ${!hideSignage ? 'pointer-events-none' : ''}`}>
         <Routes>
           {/* Routes without system */}
-          <Route path="/" element={null} />
+          <Route path="/" element={<SignagePage />} />
           <Route path="/directory" element={<DirectoryPage />} />
           <Route path="/wayfinding" element={<WayfindingPage />} />
           <Route path="/events" element={<EventsPage />} />
@@ -216,7 +217,7 @@ const AppContent: React.FC = () => {
           <Route path="/game" element={<GamePage />} />
 
           {/* Routes with system - :system parameter will be picked up by SystemContext */}
-          <Route path="/:system" element={null} />
+          <Route path="/:system" element={<SignagePage />} />
           <Route path="/:system/directory" element={<DirectoryPage />} />
           <Route path="/:system/wayfinding" element={<WayfindingPage />} />
           <Route path="/:system/events" element={<EventsPage />} />
