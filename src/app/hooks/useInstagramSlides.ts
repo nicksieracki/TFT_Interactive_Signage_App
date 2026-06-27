@@ -6,15 +6,14 @@ import { usePlaceOS } from '../contexts/PlaceOSContext';
 /**
  * Hook to bind to the PlaceOS Instagram driver `slides` state.
  *
- * Gated on `online` (the live, authorized websocket session) — NOT `ready`.
- * Binding before the session is online produces a 401 and an `undefined` push,
- * because the bind lands in an unauthorized session. Gating on `online` also
- * gives correct reconnection behavior: if the socket drops and returns,
- * `online` flips false→true, the effect re-runs, and we re-bind.
+ * Gated on `online` (live, authorized websocket) — binding before the session
+ * is online lands in an unauthorized session and never receives a value.
  *
- * Binding is asynchronous: the current value is pushed via the callback a moment
- * after bind — there is no reliable synchronous read at bind time, so the
- * callback is the only source of truth.
+ * Pattern: subscribe to listen() BEFORE calling bind(). The current value is
+ * pushed asynchronously after bind triggers the server to send it; subscribing
+ * first guarantees we don't miss that push. (bindThenSubscribe fired the
+ * callback once synchronously with the empty cached value and we missed the
+ * later real push — listen()-before-bind() fixes that.)
  */
 export const useInstagramSlides = (systemId?: string) => {
     const { online } = usePlaceOS();
@@ -22,7 +21,7 @@ export const useInstagramSlides = (systemId?: string) => {
     const [isConnected, setIsConnected] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Guards against setting state after the effect has been torn down
+    // Guards against setting state after the effect is torn down
     // (StrictMode double-mount, fast remounts, unmount mid-flight).
     const mountedRef = useRef(true);
 
@@ -35,18 +34,18 @@ export const useInstagramSlides = (systemId?: string) => {
             return;
         }
 
-        let subscription: { unsubscribe: () => void } | null = null;
+        let valueSub: { unsubscribe: () => void } | null = null;
+        let binding: any = null;
 
         try {
-            console.log('[IG] binding to module Instagram_1 in system:', systemId);
+            console.log('[IG] resolving module Instagram_1 in system:', systemId);
             const module = getModule(systemId, 'Instagram_1');
-            const binding = module.variable<Slide[]>('slides');
+            binding = module.variable<Slide[]>('slides');
 
-            // bindThenSubscribe() subscribes and fires the callback with the current
-            // value shortly after binding, then again on every change.
-            subscription = binding.bindThenSubscribe((newValue: Slide[]) => {
+            // 1) Subscribe to the value stream FIRST.
+            valueSub = binding.listen().subscribe((newValue: Slide[]) => {
                 console.log(
-                    '[IG] >>> callback fired. mounted:',
+                    '[IG] listen emission. mounted:',
                     mountedRef.current,
                     '| isArray:',
                     Array.isArray(newValue),
@@ -54,24 +53,23 @@ export const useInstagramSlides = (systemId?: string) => {
                     newValue?.length,
                 );
 
-                if (!mountedRef.current) {
-                    console.log('[IG] callback ignored — component unmounted');
-                    return;
-                }
+                if (!mountedRef.current) return;
 
-                // `undefined` can arrive before the first real push — treat as
-                // "not ready yet" and don't overwrite good data we already have.
                 if (newValue && Array.isArray(newValue)) {
                     console.log('[IG] setting slides, count:', newValue.length);
                     setSlides(newValue);
                     setIsConnected(true);
                     setError(null);
                 } else {
-                    console.log('[IG] push was empty/undefined — treating as not-ready');
+                    console.log('[IG] emission empty/undefined — treating as not-ready');
                 }
             });
 
-            console.log('[IG] subscription created');
+            // 2) Then bind — this triggers the server to push the current value
+            //    to the listener we just registered.
+            console.log('[IG] binding...');
+            binding.bind();
+            console.log('[IG] bound; awaiting value push');
         } catch (err) {
             console.error('[IG] failed to bind Instagram slides:', err);
             if (mountedRef.current) {
@@ -83,11 +81,18 @@ export const useInstagramSlides = (systemId?: string) => {
         return () => {
             console.log('[IG] <<< cleanup running');
             mountedRef.current = false;
-            if (subscription) {
+            if (valueSub) {
                 try {
-                    subscription.unsubscribe();
+                    valueSub.unsubscribe();
                 } catch (err) {
-                    console.error('[IG] error unsubscribing from Instagram slides:', err);
+                    console.error('[IG] error unsubscribing listener:', err);
+                }
+            }
+            if (binding) {
+                try {
+                    binding.unbind();
+                } catch (err) {
+                    console.error('[IG] error unbinding:', err);
                 }
             }
         };
