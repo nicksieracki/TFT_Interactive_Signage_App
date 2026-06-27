@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { BrowserRouter, Link, Route, Routes, useLocation } from 'react-router-dom';
+import { HashRouter, Link, Route, Routes, useLocation } from 'react-router-dom';
 import { SignagePlayer } from './components/SignagePlayer';
 import { Icon } from './components/Icon';
 import { PlaceOSProvider } from './contexts/PlaceOSContext';
@@ -116,7 +116,7 @@ const NavButton: React.FC<NavButtonProps> = ({ to, active, icon, children }) => 
 
 export const App: React.FC = () => {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <PlaceOSProvider>
         <SettingsProvider>
           <SystemProvider>
@@ -124,6 +124,6 @@ export const App: React.FC = () => {
           </SystemProvider>
         </SettingsProvider>
       </PlaceOSProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 };
