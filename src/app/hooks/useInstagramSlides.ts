@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getModule } from '@placeos/ts-client';
+import { getModule, value } from '@placeos/ts-client';
 import { Slide } from '../types/instagram';
 import { usePlaceOS } from '../contexts/PlaceOSContext';
 
@@ -27,25 +27,39 @@ export const useInstagramSlides = (systemId?: string) => {
 
       // Get the Instagram module and bind to its slides state
       const module = getModule(systemId, 'Instagram_1');
+
+      // Try to get the module state directly to see what's available
+      console.log('Module object:', module);
+
       const binding = module.variable<Slide[]>('slides');
 
       console.log('Got binding, current value:', binding.value);
 
-      // Bind to the variable and subscribe to changes
-      subscription = binding.bindThenSubscribe((value: Slide[]) => {
-        console.log('Received slides update:', value);
-        setSlides(value || []);
-        setError(null);
+      // Try to get the current value directly
+      const currentValue = value<Slide[]>({
+        sys: systemId,
+        mod: 'Instagram_1',
+        index: 1,
+        name: 'slides'
       });
 
-      // Check if there's already a value
-      if (binding.value) {
-        console.log('Setting initial value from binding.value');
-        setSlides(binding.value);
+      console.log('Fetched current value:', currentValue);
+
+      if (currentValue && currentValue.length > 0) {
+        console.log('Setting initial slides from current value');
+        setSlides(currentValue);
+        setIsConnected(true);
       }
 
-      // Set connected regardless - we have the binding
-      setIsConnected(true);
+      // Bind to the variable and subscribe to changes
+      subscription = binding.bindThenSubscribe((newValue: Slide[]) => {
+        console.log('Received slides update:', newValue);
+        if (newValue) {
+          setSlides(newValue);
+          setIsConnected(true);
+          setError(null);
+        }
+      });
 
       console.log('Subscription created successfully');
 
