@@ -53,8 +53,10 @@ export const CaptionScroller: React.FC<CaptionScrollerProps> = ({
 
   if (!caption) {
     return (
-      <div className="p-4 text-white">
-        <p className="font-semibold">@{username}</p>
+      <div className="relative backdrop-blur-xl bg-gradient-to-t from-black/95 via-black/80 to-black/40 p-6">
+        <div className="relative z-10">
+          <p className="font-bold text-xl text-white drop-shadow-2xl">@{username}</p>
+        </div>
       </div>
     );
   }
@@ -62,7 +64,7 @@ export const CaptionScroller: React.FC<CaptionScrollerProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative h-36 overflow-hidden bg-gradient-to-t from-black/90 via-black/60 to-transparent p-4"
+      className="relative h-44 overflow-hidden backdrop-blur-xl bg-gradient-to-t from-black/95 via-black/85 to-black/50 p-6"
     >
       <style>
         {`
@@ -71,23 +73,24 @@ export const CaptionScroller: React.FC<CaptionScrollerProps> = ({
               transform: translateY(0);
             }
             to {
-              transform: translateY(calc(-100% + 9rem));
+              transform: translateY(calc(-100% + 11rem));
             }
           }
         `}
       </style>
       <div
         ref={contentRef}
-        className="text-white"
+        className="relative z-10"
         style={{
           animationName: 'captionScroll',
           animationDuration: `${scrollDuration}ms`,
           animationTimingFunction: 'linear',
           animationFillMode: 'forwards',
+          textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 4px 16px rgba(0,0,0,0.7)',
         }}
       >
-        <p className="font-semibold mb-1">@{username}</p>
-        <p className="text-sm whitespace-pre-wrap">{caption}</p>
+        <p className="font-bold text-xl text-white mb-3">@{username}</p>
+        <p className="text-lg leading-relaxed text-white/95 whitespace-pre-wrap font-medium">{caption}</p>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { Slide, LayoutMode } from '../../types/instagram';
 import { ImageSlide } from './ImageSlide';
 import { VideoSlide } from './VideoSlide';
 import { CarouselSlide } from './CarouselSlide';
+import { Icon } from '../Icon';
 
 interface InstagramSlideshowProps {
   slides: Slide[];
@@ -171,10 +172,15 @@ export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
   // Empty/not-ready state
   if (slides.length === 0) {
     return (
-      <div className={`flex items-center justify-center bg-black text-white ${className}`}>
+      <div className={`flex items-center justify-center bg-gradient-to-br from-purple-900/20 via-black to-blue-900/20 text-white ${className}`}>
         <div className="text-center">
-          <p className="text-2xl font-semibold mb-2">Instagram Feed</p>
-          <p className="text-gray-400">Loading...</p>
+          <div className="mb-4">
+            <Icon className="text-6xl text-white/80 animate-pulse">photo_camera</Icon>
+          </div>
+          <p className="text-3xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+            Instagram Feed
+          </p>
+          <p className="text-lg text-gray-300 animate-pulse">Loading amazing content...</p>
         </div>
       </div>
     );
@@ -212,9 +218,15 @@ export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
         />
       )}
 
-      {/* Position indicator - moved to top right to avoid caption overlap */}
-      <div className="absolute top-4 right-4 bg-black/50 px-2 py-1 rounded text-white/70 text-sm">
-        {currentIndex + 1} / {slides.length}
+      {/* Position indicator - premium styling */}
+      <div className="absolute top-6 right-6 bg-gradient-to-r from-black/80 to-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-2xl">
+        <span className="text-white font-bold text-lg">
+          {currentIndex + 1}
+        </span>
+        <span className="text-white/60 mx-2">/</span>
+        <span className="text-white/80 font-semibold text-lg">
+          {slides.length}
+        </span>
       </div>
     </div>
   );

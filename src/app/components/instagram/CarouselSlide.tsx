@@ -88,14 +88,16 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
           }}
         />
 
-        {/* Carousel indicators - overlaid on media */}
+        {/* Carousel indicators - premium design */}
         {validChildren.length > 1 && (
-          <div className="absolute top-4 left-0 right-0 flex justify-center gap-1 px-4">
+          <div className="absolute top-6 left-0 right-0 flex justify-center gap-3 px-6">
             {validChildren.map((_, index) => (
               <div
                 key={index}
-                className={`h-1 flex-1 max-w-12 rounded-full transition-colors ${
-                  index === currentChildIndex ? 'bg-white' : 'bg-white/40'
+                className={`h-2 flex-1 max-w-16 rounded-full transition-all duration-500 ${
+                  index === currentChildIndex
+                    ? 'bg-gradient-to-r from-white to-white/90 shadow-lg shadow-white/30 scale-y-150'
+                    : 'bg-white/30 hover:bg-white/50'
                 }`}
               />
             ))}

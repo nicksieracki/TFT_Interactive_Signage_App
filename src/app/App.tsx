@@ -60,20 +60,23 @@ const AppContent: React.FC = () => {
       </div>
 
       {/* Navigation bar container - fixed height at bottom */}
-      <div className="flex-shrink-0 p-3">
+      <div className="flex-shrink-0 flex items-center justify-center p-4">
         <nav
-          className="mx-auto flex max-w-[calc(100vw-1.5rem)] items-center gap-1 overflow-x-auto rounded-lg border border-[#038AED]/30 bg-[#03121E]/95 p-1.5 text-white shadow-[0_18px_45px_rgba(0,11,19,0.45)] backdrop-blur-md select-none"
+          className="flex items-center gap-2 rounded-2xl border border-white/10 bg-gradient-to-r from-gray-900/95 via-black/95 to-gray-900/95 px-3 py-2 text-white shadow-2xl backdrop-blur-xl select-none"
+          style={{
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 100px rgba(3, 138, 237, 0.1)',
+          }}
           aria-label="Wayfinder controls"
         >
           {hideSignage && (
             <Link
               to={signageLink}
-              className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-md p-1 text-white/80 hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-[#FFD100] focus-visible:outline-none sm:h-15 sm:w-15"
-            aria-label="Back to signage"
-          >
-            <Icon className="text-3xl">arrow_back</Icon>
-          </Link>
-        )}
+              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-gray-700/50 to-gray-800/50 p-2 text-white/80 transition-all duration-300 hover:scale-110 hover:from-gray-600/50 hover:to-gray-700/50 hover:text-white hover:shadow-lg focus-visible:ring-2 focus-visible:ring-[#FFD100] focus-visible:outline-none sm:h-18 sm:w-18 mr-2"
+              aria-label="Back to signage"
+            >
+              <Icon className="text-3xl sm:text-4xl drop-shadow-lg">arrow_back</Icon>
+            </Link>
+          )}
         <NavButton to={getLink('directory')} active={activeTab === 'directory'} icon="list_alt">
           Directory
         </NavButton>
@@ -110,13 +113,20 @@ const NavButton: React.FC<NavButtonProps> = ({ to, active, icon, children }) => 
   return (
     <Link
       to={to}
-      className={`flex h-14 min-w-[4.75rem] flex-col items-center justify-center gap-0.5 rounded-md px-2 py-1 text-white/80 hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-[#FFD100] focus-visible:outline-none sm:h-15 sm:min-w-24 sm:px-3 ${
-        active ? 'bg-[#038AED] text-white shadow-[0_8px_24px_rgba(3,138,237,0.35)]' : ''
+      className={`relative flex h-16 min-w-[5rem] flex-col items-center justify-center gap-1 rounded-xl px-4 py-2 transition-all duration-300 hover:scale-105 focus-visible:ring-2 focus-visible:ring-[#FFD100] focus-visible:outline-none sm:h-18 sm:min-w-28 sm:px-5 ${
+        active
+          ? 'bg-gradient-to-br from-[#038AED] to-[#0066CC] text-white shadow-lg shadow-[#038AED]/30 scale-105'
+          : 'text-white/60 hover:text-white hover:bg-white/5'
       }`}
       aria-current={active ? 'page' : undefined}
     >
-      <Icon className="text-3xl">{icon}</Icon>
-      <span className="text-[0.7rem] font-medium sm:text-xs">{children}</span>
+      {active && (
+        <div className="absolute inset-0 rounded-xl bg-gradient-to-t from-white/20 to-transparent opacity-50" />
+      )}
+      <Icon className={`text-3xl sm:text-4xl ${active ? 'drop-shadow-lg' : ''}`}>{icon}</Icon>
+      <span className={`text-xs font-semibold sm:text-sm ${active ? 'text-white' : 'text-white/80'}`}>
+        {children}
+      </span>
     </Link>
   );
 };
