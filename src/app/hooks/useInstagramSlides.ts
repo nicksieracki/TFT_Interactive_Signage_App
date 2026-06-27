@@ -23,7 +23,7 @@ export const useInstagramSlides = (systemId?: string) => {
 
     try {
       // Get the Instagram module and bind to its slides state
-      const module = getModule(systemId, 'Instagram');
+      const module = getModule(systemId, 'Instagram_1');
       binding = module.binding('slides');
 
       const subscription = binding.bind();
