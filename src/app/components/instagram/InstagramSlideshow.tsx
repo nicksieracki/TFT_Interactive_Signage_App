@@ -212,8 +212,8 @@ export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
         />
       )}
 
-      {/* Navigation hint (optional, can be hidden or styled differently) */}
-      <div className="absolute bottom-2 right-2 text-white/50 text-xs">
+      {/* Position indicator - moved to top right to avoid caption overlap */}
+      <div className="absolute top-4 right-4 bg-black/50 px-2 py-1 rounded text-white/70 text-sm">
         {currentIndex + 1} / {slides.length}
       </div>
     </div>

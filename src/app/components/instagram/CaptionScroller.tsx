@@ -62,7 +62,7 @@ export const CaptionScroller: React.FC<CaptionScrollerProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative h-32 overflow-hidden bg-gradient-to-t from-black/80 to-transparent p-4"
+      className="relative h-36 overflow-hidden bg-gradient-to-t from-black/90 via-black/60 to-transparent p-4"
     >
       <style>
         {`
@@ -71,7 +71,7 @@ export const CaptionScroller: React.FC<CaptionScrollerProps> = ({
               transform: translateY(0);
             }
             to {
-              transform: translateY(calc(-100% + 8rem));
+              transform: translateY(calc(-100% + 9rem));
             }
           }
         `}

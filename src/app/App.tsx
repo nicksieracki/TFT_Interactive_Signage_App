@@ -37,33 +37,38 @@ const AppContent: React.FC = () => {
   const signageLink = system ? `/${system}` : '/';
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-[var(--mat-sys-surface)]">
-      <SignagePlayer hide={hideSignage} />
-      <div className={`absolute inset-0 z-10 ${!hideSignage ? 'pointer-events-none' : ''}`}>
-        <Routes>
-          <Route path="/" element={<SignagePage />} />
-          <Route path="/directory" element={<DirectoryPage />} />
-          <Route path="/wayfinding" element={<WayfindingPage />} />
-          <Route path="/events" element={<EventsPage />} />
-          <Route path="/instagram" element={<InstagramPage />} />
-          <Route path="/game" element={<GamePage />} />
-          <Route path="/:system" element={<SignagePage />} />
-          <Route path="/:system/directory" element={<DirectoryPage />} />
-          <Route path="/:system/wayfinding" element={<WayfindingPage />} />
-          <Route path="/:system/events" element={<EventsPage />} />
-          <Route path="/:system/instagram" element={<InstagramPage />} />
-          <Route path="/:system/game" element={<GamePage />} />
-        </Routes>
+    <div className="flex flex-col h-full w-full overflow-hidden bg-[var(--mat-sys-surface)]">
+      {/* Main content area - takes remaining space */}
+      <div className="relative flex-1 min-h-0">
+        <SignagePlayer hide={hideSignage} />
+        <div className={`absolute inset-0 z-10 ${!hideSignage ? 'pointer-events-none' : ''}`}>
+          <Routes>
+            <Route path="/" element={<SignagePage />} />
+            <Route path="/directory" element={<DirectoryPage />} />
+            <Route path="/wayfinding" element={<WayfindingPage />} />
+            <Route path="/events" element={<EventsPage />} />
+            <Route path="/instagram" element={<InstagramPage />} />
+            <Route path="/game" element={<GamePage />} />
+            <Route path="/:system" element={<SignagePage />} />
+            <Route path="/:system/directory" element={<DirectoryPage />} />
+            <Route path="/:system/wayfinding" element={<WayfindingPage />} />
+            <Route path="/:system/events" element={<EventsPage />} />
+            <Route path="/:system/instagram" element={<InstagramPage />} />
+            <Route path="/:system/game" element={<GamePage />} />
+          </Routes>
+        </div>
       </div>
 
-      <nav
-        className="absolute bottom-3 left-1/2 z-30 flex max-w-[calc(100vw-1.5rem)] -translate-x-1/2 items-center gap-1 overflow-x-auto rounded-lg border border-[#038AED]/30 bg-[#03121E]/95 p-1.5 text-white shadow-[0_18px_45px_rgba(0,11,19,0.45)] backdrop-blur-md select-none"
-        aria-label="Wayfinder controls"
-      >
-        {hideSignage && (
-          <Link
-            to={signageLink}
-            className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-md p-1 text-white/80 hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-[#FFD100] focus-visible:outline-none sm:h-15 sm:w-15"
+      {/* Navigation bar container - fixed height at bottom */}
+      <div className="flex-shrink-0 p-3">
+        <nav
+          className="mx-auto flex max-w-[calc(100vw-1.5rem)] items-center gap-1 overflow-x-auto rounded-lg border border-[#038AED]/30 bg-[#03121E]/95 p-1.5 text-white shadow-[0_18px_45px_rgba(0,11,19,0.45)] backdrop-blur-md select-none"
+          aria-label="Wayfinder controls"
+        >
+          {hideSignage && (
+            <Link
+              to={signageLink}
+              className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-md p-1 text-white/80 hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-[#FFD100] focus-visible:outline-none sm:h-15 sm:w-15"
             aria-label="Back to signage"
           >
             <Icon className="text-3xl">arrow_back</Icon>
@@ -88,7 +93,8 @@ const AppContent: React.FC = () => {
         <NavButton to={getLink('game')} active={activeTab === 'game'} icon="sports_esports">
           Game
         </NavButton>
-      </nav>
+        </nav>
+      </div>
     </div>
   );
 };
