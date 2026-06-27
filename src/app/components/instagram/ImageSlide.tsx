@@ -1,57 +1,143 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Slide } from '../../types/instagram';
-import { BlurredBackdrop } from './BlurredBackdrop';
-import { CaptionScroller } from './CaptionScroller';
 
 interface ImageSlideProps {
   slide: Slide;
   onAdvance?: () => void;
-  minDuration?: number; // 8s default
-  maxDuration?: number; // 25s default
+  duration?: number; // Default 10s
 }
 
 /**
+ * Formats a timestamp string to relative time (e.g., "601 days ago")
+ */
+const formatRelativeTime = (timestamp: string): string => {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) {
+    return 'today';
+  } else if (diffDays === 1) {
+    return 'yesterday';
+  } else if (diffDays < 7) {
+    return `${diffDays} days ago`;
+  } else if (diffDays < 30) {
+    const weeks = Math.floor(diffDays / 7);
+    return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+  } else if (diffDays < 365) {
+    const months = Math.floor(diffDays / 30);
+    return `${months} ${months === 1 ? 'month' : 'months'} ago`;
+  } else {
+    const years = Math.floor(diffDays / 365);
+    return `${years} ${years === 1 ? 'year' : 'years'} ago`;
+  }
+};
+
+/**
  * ImageSlide component
- * Renders image with blurred-backdrop contain treatment
- * Auto-scrolling caption drives dwell time (8-25s clamped)
- * Advances when caption scroll completes
+ * Full-screen image display with Instagram-style layout
  */
 export const ImageSlide: React.FC<ImageSlideProps> = ({
   slide,
   onAdvance,
-  minDuration = 8000,
-  maxDuration = 25000,
+  duration = 10000,
 }) => {
+  useEffect(() => {
+    if (!slide.url) {
+      onAdvance?.();
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      onAdvance?.();
+    }, duration);
+
+    return () => clearTimeout(timer);
+  }, [slide, onAdvance, duration]);
+
   if (!slide.url) {
-    // No image URL - skip this slide
-    onAdvance?.();
     return null;
   }
 
-  // Derive alt text from caption or use empty string
-  const altText = slide.caption?.substring(0, 100) || '';
+  const timeAgo = formatRelativeTime(slide.timestamp);
 
   return (
-    <div className="flex flex-col h-full w-full">
-      {/* Image with blurred backdrop - takes remaining space */}
-      <div className="flex-1 min-h-0 relative">
-        <BlurredBackdrop
+    <div className="flex flex-col h-full w-full bg-black">
+      {/* Timestamp header */}
+      <div className="flex-shrink-0 p-6 pb-3">
+        <p className="text-white/80 text-lg font-medium">
+          {timeAgo}
+        </p>
+      </div>
+
+      {/* Image container - takes remaining space */}
+      <div className="flex-1 min-h-0 relative flex items-center justify-center px-6">
+        <img
           src={slide.url}
-          alt={altText}
-          type="image"
-          onError={onAdvance} // Skip to next slide on load failure
+          alt={slide.caption || ''}
+          className="max-h-full max-w-full object-contain rounded-lg"
+          onError={onAdvance}
         />
       </div>
 
-      {/* Caption at bottom - fixed height */}
-      <div className="flex-shrink-0">
-        <CaptionScroller
-          caption={slide.caption}
-          username={slide.username}
-          onScrollComplete={onAdvance}
-          minDuration={minDuration}
-          maxDuration={maxDuration}
-        />
+      {/* Caption and branding footer */}
+      <div className="flex-shrink-0 p-6 pt-3 bg-gradient-to-t from-black/80 to-transparent">
+        {slide.caption && (
+          <p className="text-white text-lg leading-relaxed mb-4 max-h-32 overflow-y-auto">
+            {slide.caption}
+          </p>
+        )}
+
+        <div className="flex items-center justify-between">
+          <p className="text-white/90 text-lg font-medium">
+            @{slide.username}
+          </p>
+
+          {/* Instagram icon */}
+          <svg
+            className="w-8 h-8"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <rect
+              x="2"
+              y="2"
+              width="20"
+              height="20"
+              rx="5"
+              stroke="url(#instagram-gradient)"
+              strokeWidth="2"
+            />
+            <circle
+              cx="12"
+              cy="12"
+              r="4"
+              stroke="url(#instagram-gradient)"
+              strokeWidth="2"
+            />
+            <circle
+              cx="18"
+              cy="6"
+              r="1.5"
+              fill="url(#instagram-gradient)"
+            />
+            <defs>
+              <linearGradient
+                id="instagram-gradient"
+                x1="0%"
+                y1="100%"
+                x2="100%"
+                y2="0%"
+              >
+                <stop offset="0%" stopColor="#FED576" />
+                <stop offset="26%" stopColor="#F47133" />
+                <stop offset="61%" stopColor="#BC3081" />
+                <stop offset="100%" stopColor="#4F5BD5" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
       </div>
     </div>
   );

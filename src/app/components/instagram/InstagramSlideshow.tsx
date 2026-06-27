@@ -26,7 +26,6 @@ export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
   className = '',
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [carouselChildIndex, setCarouselChildIndex] = useState(0);
 
   // Reconcile data updates: if current slide ID still exists, keep showing it
   useEffect(() => {
@@ -39,7 +38,6 @@ export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
     if (!currentSlide) {
       // Current index out of bounds, reset to 0
       setCurrentIndex(0);
-      setCarouselChildIndex(0);
       return;
     }
 
@@ -59,57 +57,19 @@ export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
     if (slides.length === 0) return;
 
     setCurrentIndex((prev) => (prev + 1) % slides.length);
-    setCarouselChildIndex(0); // Reset carousel child index for next slide
   }, [slides.length]);
 
   // Manual navigation: Next (swipe-left = arrow-right)
   const goToNext = useCallback(() => {
     if (slides.length === 0) return;
-
-    const currentSlide = slides[currentIndex];
-    if (!currentSlide) return;
-
-    // If current slide is a carousel, advance within carousel first
-    if (currentSlide.type === 'carousel' && currentSlide.children) {
-      const validChildren = currentSlide.children.filter((c) => c.url);
-      if (carouselChildIndex < validChildren.length - 1) {
-        // More children in carousel - advance to next child
-        setCarouselChildIndex((prev) => prev + 1);
-        return;
-      }
-    }
-
-    // Not a carousel or on last child - advance to next slide
     setCurrentIndex((prev) => (prev + 1) % slides.length);
-    setCarouselChildIndex(0);
-  }, [slides, currentIndex, carouselChildIndex]);
+  }, [slides.length]);
 
   // Manual navigation: Previous (swipe-right = arrow-left)
   const goToPrevious = useCallback(() => {
     if (slides.length === 0) return;
-
-    const currentSlide = slides[currentIndex];
-    if (!currentSlide) return;
-
-    // If current slide is a carousel and not on first child, go to previous child
-    if (currentSlide.type === 'carousel' && carouselChildIndex > 0) {
-      setCarouselChildIndex((prev) => prev - 1);
-      return;
-    }
-
-    // On first child of carousel or not a carousel - go to previous slide
-    const newIndex = currentIndex === 0 ? slides.length - 1 : currentIndex - 1;
-    setCurrentIndex(newIndex);
-
-    // If previous slide is a carousel, go to its last child
-    const prevSlide = slides[newIndex];
-    if (prevSlide && prevSlide.type === 'carousel' && prevSlide.children) {
-      const validChildren = prevSlide.children.filter((c) => c.url);
-      setCarouselChildIndex(Math.max(0, validChildren.length - 1));
-    } else {
-      setCarouselChildIndex(0);
-    }
-  }, [slides, currentIndex, carouselChildIndex]);
+    setCurrentIndex((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+  }, [slides.length]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -213,8 +173,6 @@ export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
         <CarouselSlide
           slide={currentSlide}
           onAdvance={advanceToNextSlide}
-          onChildIndexChange={setCarouselChildIndex}
-          externalChildIndex={carouselChildIndex}
         />
       )}
 
