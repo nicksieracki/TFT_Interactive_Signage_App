@@ -2,9 +2,10 @@ import React, { useMemo } from 'react';
 import { HashRouter, Link, Route, Routes, useLocation } from 'react-router-dom';
 import { SignagePlayer } from './components/SignagePlayer';
 import { Icon } from './components/Icon';
-import { PlaceOSProvider } from './contexts/PlaceOSContext';
-import { SettingsProvider } from './contexts/SettingsContext';
-import { SystemProvider, useSystem } from './contexts/SystemContext';
+import { AuthProvider } from './AuthContext';
+import { PlaceOSProvider } from './PlaceOSContext';
+import { SettingsProvider } from './SettingsContext';
+import { SystemProvider, useSystem } from './SystemContext';
 import { useIdle } from './hooks/useIdle';
 import { DirectoryPage } from './pages/DirectoryPage';
 import { EventsPage } from './pages/EventsPage';
@@ -117,13 +118,15 @@ const NavButton: React.FC<NavButtonProps> = ({ to, active, icon, children }) => 
 export const App: React.FC = () => {
   return (
     <HashRouter>
-      <PlaceOSProvider>
-        <SettingsProvider>
-          <SystemProvider>
-            <AppContent />
-          </SystemProvider>
-        </SettingsProvider>
-      </PlaceOSProvider>
+      <AuthProvider>
+        <PlaceOSProvider>
+          <SettingsProvider>
+            <SystemProvider>
+              <AppContent />
+            </SystemProvider>
+          </SettingsProvider>
+        </PlaceOSProvider>
+      </AuthProvider>
     </HashRouter>
   );
 };

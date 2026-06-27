@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSystem } from '../contexts/SystemContext';
+import { useSystem } from '../SystemContext';
 import { useInstagramSlides } from '../hooks/useInstagramSlides';
 import { InstagramSlideshow } from '../components/instagram/InstagramSlideshow';
 

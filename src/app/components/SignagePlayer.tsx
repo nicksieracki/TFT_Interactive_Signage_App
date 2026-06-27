@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useSettings } from '../contexts/SettingsContext';
-import { useSystem } from '../contexts/SystemContext';
+import { useSettings } from '../SettingsContext';
+import { useSystem } from '../SystemContext';
 import { Icon } from './Icon';
 
 interface SignagePlayerProps {

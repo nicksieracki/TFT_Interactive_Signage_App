@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { getModule } from '@placeos/ts-client';
 import { Slide } from '../types/instagram';
-import { usePlaceOS } from '../contexts/PlaceOSContext';
+import { useAuth } from '../useAuth';
 
 /**
  * Hook to bind to the PlaceOS Instagram driver `slides` state.
  *
- * Gated on `online` (live, authorized websocket) — binding before the session
- * is online lands in an unauthorized session and never receives a value.
+ * Gated on authentication — binding before the user is authenticated
+ * would fail as PlaceOS requires authorization.
  *
  * Pattern: subscribe to listen() BEFORE calling bind(). The current value is
  * pushed asynchronously after bind triggers the server to send it; subscribing
@@ -16,7 +16,7 @@ import { usePlaceOS } from '../contexts/PlaceOSContext';
  * later real push — listen()-before-bind() fixes that.)
  */
 export const useInstagramSlides = (systemId?: string) => {
-    const { online } = usePlaceOS();
+    const { isAuthenticated, loading } = useAuth();
     const [slides, setSlides] = useState<Slide[]>([]);
     const [isConnected, setIsConnected] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -28,8 +28,8 @@ export const useInstagramSlides = (systemId?: string) => {
     useEffect(() => {
         mountedRef.current = true;
 
-        if (!online || !systemId) {
-            console.log('[IG] not binding — waiting for online session:', { online, systemId });
+        if (loading || !isAuthenticated || !systemId) {
+            console.log('[IG] not binding — waiting for auth:', { isAuthenticated, loading, systemId });
             setIsConnected(false);
             return;
         }
@@ -96,7 +96,7 @@ export const useInstagramSlides = (systemId?: string) => {
                 }
             }
         };
-    }, [online, systemId]);
+    }, [isAuthenticated, loading, systemId]);
 
     return { slides, isConnected, error };
 };

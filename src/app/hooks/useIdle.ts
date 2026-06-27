@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useSettings } from '../contexts/SettingsContext';
+import { useSettings } from '../SettingsContext';
 
 const DEFAULT_TIMEOUT_SECS = 60;
 const IDLE_EVENTS: Array<keyof DocumentEventMap> = [

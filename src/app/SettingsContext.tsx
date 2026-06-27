@@ -1,7 +1,7 @@
 import { authority, isMock, queryZones, showMetadata } from '@placeos/ts-client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { catchError, lastValueFrom, of } from 'rxjs';
-import { DEFAULT_SETTINGS } from '../../environments/settings';
+import { DEFAULT_SETTINGS } from '../environments/settings';
 
 type HashMap<T = unknown> = Record<string, T>;
 
