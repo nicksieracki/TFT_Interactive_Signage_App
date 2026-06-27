@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { matchPath, useLocation, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 const KEYS = ['system', 'system_id'] as const;
 
@@ -11,18 +11,17 @@ const SystemContext = createContext<SystemContextValue | undefined>(undefined);
 
 export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [system, setSystem] = useState<string | null>(null);
+  const params = useParams<{ system?: string }>();
   const [searchParams] = useSearchParams();
-  const location = useLocation();
 
   useEffect(() => {
-    // Check for signage system id
-    const match = matchPath({ path: '/:system/*' }, location.pathname);
-    if (match?.params.system) {
-      setSystem(match.params.system);
+    // First check route params (from /:system routes)
+    if (params.system) {
+      setSystem(params.system);
       return;
     }
 
-    // Check query params
+    // Then check query params as fallback
     for (const key of KEYS) {
       const value = searchParams.get(key);
       if (value) {
@@ -33,7 +32,7 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     // No system found
     setSystem(null);
-  }, [searchParams, location]);
+  }, [params.system, searchParams]);
 
   return <SystemContext.Provider value={{ system }}>{children}</SystemContext.Provider>;
 };
