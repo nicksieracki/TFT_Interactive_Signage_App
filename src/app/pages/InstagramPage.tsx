@@ -1,21 +1,41 @@
 import React from 'react';
-import { useSettings } from '../contexts/SettingsContext';
+import { useSystem } from '../contexts/SystemContext';
+import { useInstagramSlides } from '../hooks/useInstagramSlides';
+import { InstagramSlideshow } from '../components/instagram/InstagramSlideshow';
 
 export const InstagramPage: React.FC = () => {
-  const settings = useSettings();
-  const instagramUrl = settings.get<string>('instagram_url') || '';
+  const { system } = useSystem();
+  const { slides, isConnected, error } = useInstagramSlides(system ?? undefined);
 
-  if (!instagramUrl) {
+  // Error state
+  if (error) {
     return (
-      <div className="flex h-full w-full items-center justify-center bg-white p-8">
-        <p className="text-gray-500">Instagram URL not configured</p>
+      <div className="flex h-full w-full items-center justify-center bg-black p-8">
+        <div className="text-center text-white">
+          <p className="text-xl font-semibold mb-2">Connection Error</p>
+          <p className="text-gray-400">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Not connected state
+  if (!isConnected) {
+    return (
+      <div className="flex h-full w-full items-center justify-center bg-black p-8">
+        <div className="text-center text-white">
+          <p className="text-xl font-semibold mb-2">Instagram Feed</p>
+          <p className="text-gray-400">Connecting to PlaceOS...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="h-full w-full bg-white">
-      <iframe src={instagramUrl} className="h-full w-full border-0" title="Instagram Feed" />
-    </div>
+    <InstagramSlideshow
+      slides={slides}
+      layoutMode="vertical"
+      className="h-full w-full"
+    />
   );
 };

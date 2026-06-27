@@ -38,15 +38,15 @@ export const Icon: React.FC<IconProps> = ({
   const iconClasses = `${variantClass} ${className}`.trim();
 
   return (
-    <div className="flex h-[1.25em] max-h-[1.25em] w-[1.25em] max-w-[1.25em] items-center justify-center overflow-hidden">
+    <span className="inline-flex items-center justify-center">
       {!icon || icon.type !== 'img' ? (
-        <i className={iconClasses} style={{ fontSize: '1em' }}>
+        <i className={iconClasses}>
           {icon?.content}
           {children}
         </i>
       ) : icon.type === 'img' && icon.src ? (
-        <img className="h-[1em] w-[1em]" src={icon.src} alt="" />
+        <img className={`${className}`} src={icon.src} alt="" />
       ) : null}
-    </div>
+    </span>
   );
 };
