@@ -22,7 +22,7 @@ export const useIdle = () => {
   const timeoutSecs = settings.get<number>('idle_timeout_secs') || DEFAULT_TIMEOUT_SECS;
 
   const onIdle = () => {
-    // Use system ID from context to build the home route
+    // Build the home route with system if present
     const homeRoute = system ? `/${system}` : '/';
 
     // If already at home route, just reset the timer
@@ -31,7 +31,7 @@ export const useIdle = () => {
       return;
     }
 
-    // Navigate to home route with system preserved
+    // Navigate to home route
     navigate(homeRoute);
   };
 
