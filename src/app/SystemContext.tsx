@@ -10,14 +10,22 @@ interface SystemContextValue {
 const SystemContext = createContext<SystemContextValue | undefined>(undefined);
 
 export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [system, setSystem] = useState<string | null>(null);
+  // Initialize from sessionStorage if available
+  const [system, setSystem] = useState<string | null>(() => {
+    return sessionStorage.getItem('system_id');
+  });
+
   const params = useParams<{ system?: string }>();
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
     // First check route params (from /:system routes)
     if (params.system) {
-      setSystem(params.system);
+      // Only update if it's different from current system
+      if (params.system !== system) {
+        setSystem(params.system);
+        sessionStorage.setItem('system_id', params.system);
+      }
       return;
     }
 
@@ -25,14 +33,17 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     for (const key of KEYS) {
       const value = searchParams.get(key);
       if (value) {
-        setSystem(value);
+        if (value !== system) {
+          setSystem(value);
+          sessionStorage.setItem('system_id', value);
+        }
         return;
       }
     }
 
-    // No system found
-    setSystem(null);
-  }, [params.system, searchParams]);
+    // If we don't find a system in params/query, keep the existing one from state/storage
+    // Don't clear it - this preserves system ID across navigation
+  }, [params.system, searchParams, system]);
 
   return <SystemContext.Provider value={{ system }}>{children}</SystemContext.Provider>;
 };
