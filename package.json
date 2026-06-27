@@ -9,7 +9,6 @@
     "test": "vitest"
   },
   "private": true,
-  "packageManager": "bun@1.3.11",
   "dependencies": {
     "@placeos/ts-client": "^4.8.6",
     "material-symbols": "^0.44.2",
