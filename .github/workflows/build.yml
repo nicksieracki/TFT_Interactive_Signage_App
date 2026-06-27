@@ -16,23 +16,23 @@ jobs:
               with:
                   fetch-depth: '2'
 
-            - name: Setup Bun
-              uses: oven-sh/setup-bun@v2
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
               with:
-                  bun-version: '1.3.11'
+                  node-version: '20'
 
             - name: Cache node modules
               id: cache
               uses: actions/cache@v5
               with:
                   path: node_modules
-                  key: ${{ runner.os }}-build-${{ hashFiles('**/bun.lock', '**/bun.lockb', '**/package.json') }}
+                  key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
                   restore-keys: |
                       ${{ runner.os }}-build-
 
             - name: Install dependencies
               if: steps.cache.outputs.cache-hit != 'true'
-              run: bun install --frozen-lockfile
+              run: npm ci
 
             - name: Get short hash
               id: vars
@@ -71,26 +71,26 @@ jobs:
         steps:
             - uses: actions/checkout@v6
 
-            - name: Setup Bun
-              uses: oven-sh/setup-bun@v2
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
               with:
-                  bun-version: '1.3.11'
+                  node-version: '20'
 
             - name: Cache node modules
               id: cache
               uses: actions/cache@v5
               with:
                   path: node_modules
-                  key: ${{ runner.os }}-build-${{ hashFiles('**/bun.lock', '**/bun.lockb', '**/package.json') }}
+                  key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
                   restore-keys: |
                       ${{ runner.os }}-build-
 
             - name: Install dependencies
               if: steps.cache.outputs.cache-hit != 'true'
-              run: bun install --frozen-lockfile
+              run: npm ci
 
             - name: Run unit tests
-              run: bun run test -- --watch=false
+              run: npm run test -- --run
 
     build:
         runs-on: ubuntu-latest
@@ -102,23 +102,23 @@ jobs:
         steps:
             - uses: actions/checkout@v6
 
-            - name: Setup Bun
-              uses: oven-sh/setup-bun@v2
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
               with:
-                  bun-version: '1.3.11'
+                  node-version: '20'
 
             - name: Cache node modules
               id: cache
               uses: actions/cache@v5
               with:
                   path: node_modules
-                  key: ${{ runner.os }}-build-${{ hashFiles('**/bun.lock', '**/bun.lockb', '**/package.json') }}
+                  key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
                   restore-keys: |
                       ${{ runner.os }}-build-
 
             - name: Install dependencies
               if: steps.cache.outputs.cache-hit != 'true'
-              run: bun install --frozen-lockfile
+              run: npm ci
 
             - name: Initialise Pipeline Chat Status
               uses: fjogeleit/http-request-action@master
@@ -128,14 +128,14 @@ jobs:
                   data: '{ "chat_url": "${{ secrets.CHAT_URL }}", "name": "${{ github.repository }}", "commit": "${{ github.sha }}", "pipeline_name": "signage-wayfinder", "branch": "${{ github.ref }}", "status": "processing", "url": "https://github.com/${{ github.repository }}/runs/${{ github.run_id }}" }'
 
             - name: Build application
-              run: bunx ng build --configuration=${{ env.configuration }}
+              run: npm run build
 
             - name: Deploy the application
               uses: s0/git-publish-subdir-action@develop
               env:
                   REPO: self
                   BRANCH: build/signage-wayfinder/${{ env.deploy_branch }}
-                  FOLDER: dist/signage-wayfinder/browser
+                  FOLDER: dist
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   MESSAGE: 'build(signage-wayfinder): CI build from {sha}'
 
