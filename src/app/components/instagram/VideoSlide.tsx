@@ -57,19 +57,21 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
   }, [maxVideoDuration, onAdvance]);
 
   return (
-    <div className="relative h-full w-full">
-      {/* Video with blurred backdrop */}
-      <BlurredBackdrop
-        src={slide.url}
-        type="video"
-        videoRef={videoRef}
-        poster={slide.thumbnail}
-        onVideoEnded={handleVideoEnded}
-        onError={handleVideoError}
-      />
+    <div className="flex flex-col h-full w-full">
+      {/* Video with blurred backdrop - takes remaining space */}
+      <div className="flex-1 min-h-0 relative">
+        <BlurredBackdrop
+          src={slide.url}
+          type="video"
+          videoRef={videoRef}
+          poster={slide.thumbnail}
+          onVideoEnded={handleVideoEnded}
+          onError={handleVideoError}
+        />
+      </div>
 
-      {/* Caption overlay at bottom */}
-      <div className="absolute bottom-0 left-0 right-0">
+      {/* Caption at bottom - fixed height */}
+      <div className="flex-shrink-0">
         <CaptionScroller
           caption={slide.caption}
           username={slide.username}

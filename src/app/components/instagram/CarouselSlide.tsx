@@ -71,38 +71,40 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
   }
 
   return (
-    <div className="relative h-full w-full">
-      {/* Current carousel child with blurred backdrop */}
-      <BlurredBackdrop
-        src={currentChild.url}
-        type={currentChild.type}
-        poster={currentChild.thumbnail}
-        onError={() => {
-          // On error, advance to next child or slide
-          if (currentChildIndex < validChildren.length - 1) {
-            setCurrentChildIndex((prev) => prev + 1);
-          } else {
-            onAdvance?.();
-          }
-        }}
-      />
+    <div className="flex flex-col h-full w-full">
+      {/* Current carousel child with blurred backdrop - takes remaining space */}
+      <div className="flex-1 min-h-0 relative">
+        <BlurredBackdrop
+          src={currentChild.url}
+          type={currentChild.type}
+          poster={currentChild.thumbnail}
+          onError={() => {
+            // On error, advance to next child or slide
+            if (currentChildIndex < validChildren.length - 1) {
+              setCurrentChildIndex((prev) => prev + 1);
+            } else {
+              onAdvance?.();
+            }
+          }}
+        />
 
-      {/* Carousel indicators */}
-      {validChildren.length > 1 && (
-        <div className="absolute top-4 left-0 right-0 flex justify-center gap-1 px-4">
-          {validChildren.map((_, index) => (
-            <div
-              key={index}
-              className={`h-1 flex-1 max-w-12 rounded-full transition-colors ${
-                index === currentChildIndex ? 'bg-white' : 'bg-white/40'
-              }`}
-            />
-          ))}
-        </div>
-      )}
+        {/* Carousel indicators - overlaid on media */}
+        {validChildren.length > 1 && (
+          <div className="absolute top-4 left-0 right-0 flex justify-center gap-1 px-4">
+            {validChildren.map((_, index) => (
+              <div
+                key={index}
+                className={`h-1 flex-1 max-w-12 rounded-full transition-colors ${
+                  index === currentChildIndex ? 'bg-white' : 'bg-white/40'
+                }`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
-      {/* Parent caption overlay at bottom */}
-      <div className="absolute bottom-0 left-0 right-0">
+      {/* Parent caption at bottom - fixed height */}
+      <div className="flex-shrink-0">
         <CaptionScroller
           caption={slide.caption}
           username={slide.username}

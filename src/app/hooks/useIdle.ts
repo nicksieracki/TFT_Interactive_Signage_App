@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSettings } from '../SettingsContext';
+import { useSystem } from '../SystemContext';
 
 const DEFAULT_TIMEOUT_SECS = 60;
 const IDLE_EVENTS: Array<keyof DocumentEventMap> = [
@@ -14,17 +15,24 @@ export const useIdle = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const settings = useSettings();
+  const { system } = useSystem();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const startedRef = useRef(false);
 
   const timeoutSecs = settings.get<number>('idle_timeout_secs') || DEFAULT_TIMEOUT_SECS;
 
   const onIdle = () => {
-    if (location.pathname === '/' || location.pathname.startsWith('/?')) {
+    // Use system ID from context to build the home route
+    const homeRoute = system ? `/${system}` : '/';
+
+    // If already at home route, just reset the timer
+    if (location.pathname === homeRoute) {
       reset();
       return;
     }
-    navigate('/');
+
+    // Navigate to home route with system preserved
+    navigate(homeRoute);
   };
 
   const reset = () => {
