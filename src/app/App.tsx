@@ -30,7 +30,7 @@ const AppContent: React.FC = () => {
   const hasInitialized = useRef(false);
 
   // Simple route parsing - BrowserRouter paths are predictable
-  const activeTab = useMemo(() => {
+  const activeTab = useMemo((): string => {
     const path = location.pathname.replace(/^\//, '').replace(/\/$/, '');
     const segments = path.split('/').filter(Boolean);
 
@@ -38,10 +38,12 @@ const AppContent: React.FC = () => {
       return ''; // Root route
     } else if (segments.length === 1) {
       // Either a page or system ID
-      return VALID_PAGES.includes(segments[0] as ValidPage) ? segments[0] : '';
+      const firstSegment = segments[0];
+      return firstSegment && VALID_PAGES.includes(firstSegment as ValidPage) ? firstSegment : '';
     } else {
       // System ID + page
-      return VALID_PAGES.includes(segments[1] as ValidPage) ? segments[1] : '';
+      const secondSegment = segments[1];
+      return secondSegment && VALID_PAGES.includes(secondSegment as ValidPage) ? secondSegment : '';
     }
   }, [location.pathname]);
 
@@ -52,13 +54,13 @@ const AppContent: React.FC = () => {
 
   // Pages with iframes should always show nav for better UX
   const alwaysShowNav = useMemo(
-    () => ['directory', 'events', 'game'].includes(activeTab),
+    () => activeTab !== '' && (['directory', 'events', 'game'] as readonly string[]).includes(activeTab),
     [activeTab],
   );
 
   // Pages with immersive content use touch-to-reveal nav
   const touchToRevealNav = useMemo(
-    () => ['', 'instagram', 'wayfinding'].includes(activeTab),
+    () => activeTab === '' || (['instagram', 'wayfinding'] as readonly string[]).includes(activeTab),
     [activeTab],
   );
 
@@ -126,6 +128,7 @@ const AppContent: React.FC = () => {
       if (target.closest('select')) return;
 
       const touch = e.touches[0];
+      if (!touch) return;
       touchStartX = touch.clientX;
       touchStartY = touch.clientY;
       touchStartTime = Date.now();
@@ -136,6 +139,7 @@ const AppContent: React.FC = () => {
       if (!touchStartTime) return;
 
       const touch = e.touches[0];
+      if (!touch) return;
       const deltaX = Math.abs(touch.clientX - touchStartX);
       const deltaY = Math.abs(touch.clientY - touchStartY);
 
