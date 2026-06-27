@@ -23,13 +23,12 @@ jobs:
               id: cache
               uses: actions/cache@v5
               with:
-                  path: node_modules
-                  key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
+                  path: ~/.npm
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
                   restore-keys: |
-                      ${{ runner.os }}-build-
+                      ${{ runner.os }}-node-
 
             - name: Install dependencies
-              if: steps.cache.outputs.cache-hit != 'true'
               run: npm ci
 
             - name: Get short hash
@@ -78,13 +77,12 @@ jobs:
               id: cache
               uses: actions/cache@v5
               with:
-                  path: node_modules
-                  key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
+                  path: ~/.npm
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
                   restore-keys: |
-                      ${{ runner.os }}-build-
+                      ${{ runner.os }}-node-
 
             - name: Install dependencies
-              if: steps.cache.outputs.cache-hit != 'true'
               run: npm ci
 
             - name: Run unit tests
@@ -109,13 +107,12 @@ jobs:
               id: cache
               uses: actions/cache@v5
               with:
-                  path: node_modules
-                  key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
+                  path: ~/.npm
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
                   restore-keys: |
-                      ${{ runner.os }}-build-
+                      ${{ runner.os }}-node-
 
             - name: Install dependencies
-              if: steps.cache.outputs.cache-hit != 'true'
               run: npm ci
 
             - name: Initialise Pipeline Chat Status
