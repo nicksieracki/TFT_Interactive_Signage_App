@@ -4,7 +4,9 @@ import { DEFAULT_SETTINGS } from '../../environments/settings';
 import { setupPlace } from '../services/setup-place';
 
 interface PlaceOSContextValue {
+  /** PlaceOS client setup has completed (auth configured, composer initialized). */
   ready: boolean;
+  /** The websocket session is authorized and live right now. Gate bindings on this. */
   online: boolean;
 }
 
@@ -15,6 +17,9 @@ export const PlaceOSProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [online, setOnline] = useState(false);
 
   useEffect(() => {
+    let subscription: { unsubscribe: () => void } | null = null;
+    let cancelled = false;
+
     const init = async () => {
       const params = new URLSearchParams(location.search);
       if (params.has('x-api-key')) {
@@ -22,21 +27,34 @@ export const PlaceOSProvider: React.FC<{ children: React.ReactNode }> = ({ child
       }
 
       await setupPlace(DEFAULT_SETTINGS.composer).catch((err) =>
-        console.error('PlaceOS setup failed', err),
+          console.error('PlaceOS setup failed', err),
       );
 
-      const subscription = onlineState().subscribe((value) => setOnline(value));
+      if (cancelled) return;
 
+      // `ready` = setup finished. It does NOT imply the session is online —
+      // consumers that need a live authorized connection must gate on `online`.
       setReady(true);
 
-      return () => subscription.unsubscribe();
+      // `online` reflects the live, authorized websocket session. It flips true
+      // once the app is authorised and online, and back to false on disconnect,
+      // so anything gated on it re-runs correctly across reconnections.
+      subscription = onlineState().subscribe((value) => {
+        console.log('[PlaceOS] online state:', value);
+        setOnline(value);
+      });
     };
 
     init();
+
+    return () => {
+      cancelled = true;
+      subscription?.unsubscribe();
+    };
   }, []);
 
   return (
-    <PlaceOSContext.Provider value={{ ready, online }}>{children}</PlaceOSContext.Provider>
+      <PlaceOSContext.Provider value={{ ready, online }}>{children}</PlaceOSContext.Provider>
   );
 };
 

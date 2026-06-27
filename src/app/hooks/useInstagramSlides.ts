@@ -6,14 +6,18 @@ import { usePlaceOS } from '../contexts/PlaceOSContext';
 /**
  * Hook to bind to the PlaceOS Instagram driver `slides` state.
  *
- * Binding is asynchronous: bind() subscribes, and the current value is pushed
- * down the websocket a moment later via the callback — there is no reliable
- * synchronous read at bind time. So the callback is the ONLY source of truth;
- * we never read `binding.value` synchronously (it is `undefined` until the
- * first push, even when the driver already has data).
+ * Gated on `online` (the live, authorized websocket session) — NOT `ready`.
+ * Binding before the session is online produces a 401 and an `undefined` push,
+ * because the bind lands in an unauthorized session. Gating on `online` also
+ * gives correct reconnection behavior: if the socket drops and returns,
+ * `online` flips false→true, the effect re-runs, and we re-bind.
+ *
+ * Binding is asynchronous: the current value is pushed via the callback a moment
+ * after bind — there is no reliable synchronous read at bind time, so the
+ * callback is the only source of truth.
  */
 export const useInstagramSlides = (systemId?: string) => {
-    const { ready } = usePlaceOS();
+    const { online } = usePlaceOS();
     const [slides, setSlides] = useState<Slide[]>([]);
     const [isConnected, setIsConnected] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -25,8 +29,8 @@ export const useInstagramSlides = (systemId?: string) => {
     useEffect(() => {
         mountedRef.current = true;
 
-        if (!ready || !systemId) {
-            console.log('[IG] not ready to bind:', { ready, systemId });
+        if (!online || !systemId) {
+            console.log('[IG] not binding — waiting for online session:', { online, systemId });
             setIsConnected(false);
             return;
         }
@@ -48,8 +52,6 @@ export const useInstagramSlides = (systemId?: string) => {
                     Array.isArray(newValue),
                     '| length:',
                     newValue?.length,
-                    '| value:',
-                    newValue
                 );
 
                 if (!mountedRef.current) {
@@ -57,9 +59,8 @@ export const useInstagramSlides = (systemId?: string) => {
                     return;
                 }
 
-                // `undefined` arrives before the first real push (cold start) — treat
-                // it as "not ready yet" rather than an error, and don't overwrite any
-                // good data we already have.
+                // `undefined` can arrive before the first real push — treat as
+                // "not ready yet" and don't overwrite good data we already have.
                 if (newValue && Array.isArray(newValue)) {
                     console.log('[IG] setting slides, count:', newValue.length);
                     setSlides(newValue);
@@ -80,18 +81,17 @@ export const useInstagramSlides = (systemId?: string) => {
         }
 
         return () => {
-            console.log('[IG] <<< cleanup running. subscription:', subscription);
+            console.log('[IG] <<< cleanup running');
             mountedRef.current = false;
             if (subscription) {
                 try {
                     subscription.unsubscribe();
-                    console.log('[IG] unsubscribed');
                 } catch (err) {
                     console.error('[IG] error unsubscribing from Instagram slides:', err);
                 }
             }
         };
-    }, [ready, systemId]);
+    }, [online, systemId]);
 
     return { slides, isConnected, error };
 };
