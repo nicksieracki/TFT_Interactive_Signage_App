@@ -15,6 +15,7 @@ export const useInstagramSlides = (systemId?: string) => {
 
   useEffect(() => {
     if (!ready || !systemId) {
+      console.log('Instagram binding not ready:', { ready, systemId });
       setIsConnected(false);
       return;
     }
@@ -22,20 +23,35 @@ export const useInstagramSlides = (systemId?: string) => {
     let subscription: any = null;
 
     try {
+      console.log('Attempting to bind to Instagram module:', systemId);
+
       // Get the Instagram module and bind to its slides state
       const module = getModule(systemId, 'Instagram_1');
-      const binding = module.binding('slides');
+      const binding = module.variable<Slide[]>('slides');
 
-      // Subscribe to the binding - this will automatically bind and listen
-      subscription = binding.subscribe((value: Slide[]) => {
+      console.log('Got binding, current value:', binding.value);
+
+      // Bind to the variable and subscribe to changes
+      subscription = binding.bindThenSubscribe((value: Slide[]) => {
+        console.log('Received slides update:', value);
         setSlides(value || []);
-        setIsConnected(true);
         setError(null);
       });
 
+      // Check if there's already a value
+      if (binding.value) {
+        console.log('Setting initial value from binding.value');
+        setSlides(binding.value);
+      }
+
+      // Set connected regardless - we have the binding
+      setIsConnected(true);
+
+      console.log('Subscription created successfully');
+
     } catch (err) {
       console.error('Failed to create Instagram binding:', err);
-      setError('Failed to initialize Instagram binding');
+      setError(`Failed to initialize Instagram binding: ${err}`);
       setIsConnected(false);
     }
 
