@@ -11,10 +11,19 @@ interface VideoSlideProps {
  * Formats a timestamp string to relative time (e.g., "601 days ago")
  */
 const formatRelativeTime = (timestamp: string): string => {
-  const date = new Date(timestamp);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  try {
+    if (!timestamp) return '';
+
+    const date = new Date(timestamp);
+    // Check if date is valid
+    if (isNaN(date.getTime())) {
+      console.warn('Invalid timestamp:', timestamp);
+      return '';
+    }
+
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
   if (diffDays === 0) {
     return 'today';
@@ -31,6 +40,10 @@ const formatRelativeTime = (timestamp: string): string => {
   } else {
     const years = Math.floor(diffDays / 365);
     return `${years} ${years === 1 ? 'year' : 'years'} ago`;
+  }
+  } catch (error) {
+    console.error('Error formatting timestamp:', error, timestamp);
+    return '';
   }
 };
 

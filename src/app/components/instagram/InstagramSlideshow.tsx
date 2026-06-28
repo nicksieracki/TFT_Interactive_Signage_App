@@ -4,6 +4,7 @@ import { ImageSlide } from './ImageSlide';
 import { VideoSlide } from './VideoSlide';
 import { CarouselSlide } from './CarouselSlide';
 import { Icon } from '../Icon';
+import { ErrorBoundary } from '../ErrorBoundary';
 
 interface InstagramSlideshowProps {
   slides: Slide[];
@@ -56,8 +57,25 @@ export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
   const advanceToNextSlide = useCallback(() => {
     if (slides.length === 0) return;
 
-    setCurrentIndex((prev) => (prev + 1) % slides.length);
-  }, [slides.length]);
+    const nextIndex = (currentIndex + 1) % slides.length;
+    console.log(`Advancing from slide ${currentIndex + 1} to ${nextIndex + 1} of ${slides.length}`);
+
+    // Log details about the next slide
+    const nextSlide = slides[nextIndex];
+    if (nextSlide) {
+      console.log('Next slide details:', {
+        index: nextIndex + 1,
+        id: nextSlide.id,
+        type: nextSlide.type,
+        url: nextSlide.url,
+        hasCaption: !!nextSlide.caption,
+        username: nextSlide.username,
+        childrenCount: nextSlide.children?.length || 0
+      });
+    }
+
+    setCurrentIndex(nextIndex);
+  }, [slides.length, currentIndex]);
 
   // Manual navigation: Next (swipe-left = arrow-right)
   const goToNext = useCallback(() => {
@@ -161,20 +179,42 @@ export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
 
   return (
     <div className={`relative ${className}`}>
-      {currentSlide.type === 'image' && (
-        <ImageSlide slide={currentSlide} onAdvance={advanceToNextSlide} />
-      )}
+      <ErrorBoundary
+        onError={(error) => {
+          console.error(`Error rendering slide ${currentIndex + 1}:`, error);
+          console.error('Slide data:', currentSlide);
+          // Auto-advance to next slide on error
+          setTimeout(advanceToNextSlide, 1000);
+        }}
+        fallback={
+          <div className="h-full w-full flex items-center justify-center bg-black">
+            <div className="text-center">
+              <p className="text-white/70 mb-4">Error loading post {currentIndex + 1}</p>
+              <button
+                onClick={advanceToNextSlide}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Skip to Next
+              </button>
+            </div>
+          </div>
+        }
+      >
+        {currentSlide.type === 'image' && (
+          <ImageSlide slide={currentSlide} onAdvance={advanceToNextSlide} />
+        )}
 
-      {currentSlide.type === 'video' && (
-        <VideoSlide slide={currentSlide} onAdvance={advanceToNextSlide} />
-      )}
+        {currentSlide.type === 'video' && (
+          <VideoSlide slide={currentSlide} onAdvance={advanceToNextSlide} />
+        )}
 
-      {currentSlide.type === 'carousel' && (
-        <CarouselSlide
-          slide={currentSlide}
-          onAdvance={advanceToNextSlide}
-        />
-      )}
+        {currentSlide.type === 'carousel' && (
+          <CarouselSlide
+            slide={currentSlide}
+            onAdvance={advanceToNextSlide}
+          />
+        )}
+      </ErrorBoundary>
 
       {/* Position indicator - premium styling */}
       <div className="absolute top-6 right-6 bg-gradient-to-r from-black/80 to-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-2xl">
