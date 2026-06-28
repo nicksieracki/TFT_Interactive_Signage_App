@@ -29,6 +29,18 @@ const AppContent: React.FC = () => {
   const lastTouchRef = useRef<number>(0);
   const hasInitialized = useRef(false);
 
+  // Detect if screen is horizontal (landscape)
+  const [isHorizontal, setIsHorizontal] = useState(() => window.innerWidth > window.innerHeight);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsHorizontal(window.innerWidth > window.innerHeight);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Parse route - HashRouter provides route in pathname
   const activeTab = useMemo((): string => {
     const path = location.pathname.replace(/^\//, '').replace(/\/$/, '');
@@ -202,36 +214,72 @@ const AppContent: React.FC = () => {
     };
   }, [alwaysShowNav, touchToRevealNav, handleTouch]);
 
+  // In horizontal mode, signage is never hidden
+  const shouldHideSignage = isHorizontal ? false : hideSignage;
+
   return (
     <div className="relative h-full w-full overflow-hidden bg-[var(--mat-sys-surface)]">
-      {/* Main content area - full screen */}
-      <SignagePlayer hide={hideSignage} />
-      <div className={`absolute inset-0 z-10 ${!hideSignage ? 'pointer-events-none' : ''}`}>
-        <Routes>
-          {/* Routes without system */}
-          <Route path="/" element={<SignagePage />} />
-          <Route path="/directory" element={<DirectoryPage />} />
-          <Route path="/wayfinding" element={<WayfindingPage />} />
-          <Route path="/events" element={<EventsPage />} />
-          <Route path="/instagram" element={<InstagramPage />} />
-          <Route path="/game" element={<GamePage />} />
+      {isHorizontal ? (
+        // Horizontal split-screen layout
+        <div className="flex h-full w-full">
+          {/* Left half - Always shows signage (960x1080) */}
+          <div className="w-1/2 h-full relative">
+            <SignagePlayer hide={false} />
+          </div>
 
-          {/* Routes with system - :system parameter will be picked up by SystemContext */}
-          <Route path="/:system" element={<SignagePage />} />
-          <Route path="/:system/directory" element={<DirectoryPage />} />
-          <Route path="/:system/wayfinding" element={<WayfindingPage />} />
-          <Route path="/:system/events" element={<EventsPage />} />
-          <Route path="/:system/instagram" element={<InstagramPage />} />
-          <Route path="/:system/game" element={<GamePage />} />
-        </Routes>
-      </div>
+          {/* Right half - Shows current route (960x1080) */}
+          <div className="w-1/2 h-full relative">
+            <Routes>
+              {/* Routes without system */}
+              <Route path="/" element={<div className="h-full w-full bg-black flex items-center justify-center text-white text-2xl">Select a page from the navigation</div>} />
+              <Route path="/directory" element={<DirectoryPage />} />
+              <Route path="/wayfinding" element={<WayfindingPage />} />
+              <Route path="/events" element={<EventsPage />} />
+              <Route path="/instagram" element={<InstagramPage />} />
+              <Route path="/game" element={<GamePage />} />
 
-      {/* Navigation bar - absolute positioned overlay with animation */}
+              {/* Routes with system */}
+              <Route path="/:system" element={<div className="h-full w-full bg-black flex items-center justify-center text-white text-2xl">Select a page from the navigation</div>} />
+              <Route path="/:system/directory" element={<DirectoryPage />} />
+              <Route path="/:system/wayfinding" element={<WayfindingPage />} />
+              <Route path="/:system/events" element={<EventsPage />} />
+              <Route path="/:system/instagram" element={<InstagramPage />} />
+              <Route path="/:system/game" element={<GamePage />} />
+            </Routes>
+          </div>
+        </div>
+      ) : (
+        // Vertical full-screen layout (original behavior)
+        <>
+          <SignagePlayer hide={shouldHideSignage} />
+          <div className={`absolute inset-0 z-10 ${!shouldHideSignage ? 'pointer-events-none' : ''}`}>
+            <Routes>
+              {/* Routes without system */}
+              <Route path="/" element={<SignagePage />} />
+              <Route path="/directory" element={<DirectoryPage />} />
+              <Route path="/wayfinding" element={<WayfindingPage />} />
+              <Route path="/events" element={<EventsPage />} />
+              <Route path="/instagram" element={<InstagramPage />} />
+              <Route path="/game" element={<GamePage />} />
+
+              {/* Routes with system */}
+              <Route path="/:system" element={<SignagePage />} />
+              <Route path="/:system/directory" element={<DirectoryPage />} />
+              <Route path="/:system/wayfinding" element={<WayfindingPage />} />
+              <Route path="/:system/events" element={<EventsPage />} />
+              <Route path="/:system/instagram" element={<InstagramPage />} />
+              <Route path="/:system/game" element={<GamePage />} />
+            </Routes>
+          </div>
+        </>
+      )}
+
+      {/* Navigation bar - positioned differently for horizontal vs vertical */}
       <div
-        className={`absolute bottom-0 left-0 right-0 flex items-center justify-center p-4 z-50 transition-all duration-500 ease-in-out ${
-          showNav || alwaysShowNav ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
+        className={`absolute bottom-0 ${isHorizontal ? 'left-1/2 right-0' : 'left-0 right-0'} flex items-center justify-center p-4 z-50 transition-all duration-500 ease-in-out ${
+          showNav || alwaysShowNav || isHorizontal ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
         }`}
-        style={{ pointerEvents: showNav || alwaysShowNav ? 'auto' : 'none' }}
+        style={{ pointerEvents: showNav || alwaysShowNav || isHorizontal ? 'auto' : 'none' }}
       >
         <nav
           className="flex items-center gap-2 rounded-2xl border border-white/10 bg-gradient-to-r from-gray-900/95 via-black/95 to-gray-900/95 px-3 py-2 text-white shadow-2xl backdrop-blur-xl select-none"
@@ -240,7 +288,7 @@ const AppContent: React.FC = () => {
           }}
           aria-label="Wayfinder controls"
         >
-          {hideSignage && (
+          {hideSignage && !isHorizontal && (
             <button
               onClick={() => navigateToPage('')}
               className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-gray-700/50 to-gray-800/50 p-2 text-white/80 transition-all duration-300 hover:scale-110 hover:from-gray-600/50 hover:to-gray-700/50 hover:text-white hover:shadow-lg focus-visible:ring-2 focus-visible:ring-[#FFD100] focus-visible:outline-none sm:h-18 sm:w-18 mr-2"
