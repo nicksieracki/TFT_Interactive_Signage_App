@@ -61,18 +61,24 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
 
   useEffect(() => {
     if (!slide.url) {
+      console.log('[VideoSlide] No URL, advancing immediately');
       onAdvance?.();
       return;
     }
 
+    console.log(`[VideoSlide] Starting max duration timer for ${maxVideoDuration}ms for slide:`, slide.id);
     // Cap long videos
     const timer = setTimeout(() => {
       if (videoRef.current && !videoRef.current.ended) {
+        console.log(`[VideoSlide] Max duration reached, advancing from slide:`, slide.id);
         onAdvance?.();
       }
     }, maxVideoDuration);
 
-    return () => clearTimeout(timer);
+    return () => {
+      console.log(`[VideoSlide] Clearing timer for slide:`, slide.id);
+      clearTimeout(timer);
+    };
   }, [slide, maxVideoDuration, onAdvance]);
 
   if (!slide.url) {

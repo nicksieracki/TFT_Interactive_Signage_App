@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Slide, LayoutMode } from '../../types/instagram';
 import { ImageSlide } from './ImageSlide';
 import { VideoSlide } from './VideoSlide';
@@ -27,6 +27,37 @@ export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
   className = '',
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const slidesRef = useRef(slides);
+  const renderCountRef = useRef(0);
+
+  // Debug: Track slides array changes
+  useEffect(() => {
+    renderCountRef.current++;
+    const arrayChanged = slidesRef.current !== slides;
+
+    console.log('[DEBUG] Slides array updated:', {
+      renderCount: renderCountRef.current,
+      arrayReferenceChanged: arrayChanged,
+      length: slides.length,
+      slide19: slides[18] ? { id: slides[18].id, url: slides[18].url, type: slides[18].type } : 'undefined',
+      slide20: slides[19] ? { id: slides[19].id, url: slides[19].url, type: slides[19].type } : 'undefined',
+      slide21: slides[20] ? { id: slides[20].id, url: slides[20].url, type: slides[20].type } : 'undefined',
+    });
+
+    // Check if slide 20 specifically has issues
+    if (slides[19]) {
+      console.log('[DEBUG] Full slide 20 data:', JSON.stringify(slides[19], null, 2));
+    }
+
+    // Compare with previous array
+    if (arrayChanged && slidesRef.current[19] && slides[19]) {
+      console.log('[DEBUG] Slide 20 changed between renders:');
+      console.log('  Previous:', slidesRef.current[19]);
+      console.log('  Current:', slides[19]);
+    }
+
+    slidesRef.current = slides;
+  }, [slides]);
 
   // Reconcile data updates: if current slide ID still exists, keep showing it
   useEffect(() => {
@@ -55,27 +86,59 @@ export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
 
   // Auto-advance to next slide
   const advanceToNextSlide = useCallback(() => {
+    // Get call stack to see where this was called from
+    const stack = new Error().stack;
+    const fromCarousel = stack?.includes('CarouselSlide');
+
+    console.log('[DEBUG] advanceToNextSlide called', {
+      slidesLength: slides.length,
+      calledFromCarousel: fromCarousel,
+      currentIndexAtCallTime: currentIndex
+    });
+
+    // Check state of slides array at call time
+    console.log('[DEBUG] Slides 19-21 at callback call time:', {
+      slide19: slides[18] ? { id: slides[18].id, type: slides[18].type, hasUrl: !!slides[18].url } : 'undefined',
+      slide20: slides[19] ? { id: slides[19].id, type: slides[19].type, hasUrl: !!slides[19].url } : 'undefined',
+      slide21: slides[20] ? { id: slides[20].id, type: slides[20].type, hasUrl: !!slides[20].url } : 'undefined'
+    });
+
     if (slides.length === 0) return;
 
     const nextIndex = (currentIndex + 1) % slides.length;
     console.log(`Advancing from slide ${currentIndex + 1} to ${nextIndex + 1} of ${slides.length}`);
 
-    // Log details about the next slide
+    // Log details about current and next slide
+    const currentSlide = slides[currentIndex];
     const nextSlide = slides[nextIndex];
-    if (nextSlide) {
-      console.log('Next slide details:', {
-        index: nextIndex + 1,
-        id: nextSlide.id,
-        type: nextSlide.type,
-        url: nextSlide.url,
-        hasCaption: !!nextSlide.caption,
-        username: nextSlide.username,
-        childrenCount: nextSlide.children?.length || 0
-      });
+
+    console.log('Current slide:', {
+      index: currentIndex + 1,
+      id: currentSlide?.id,
+      type: currentSlide?.type,
+      url: currentSlide?.url,
+    });
+
+    console.log('Next slide details:', {
+      index: nextIndex + 1,
+      id: nextSlide?.id,
+      type: nextSlide?.type,
+      url: nextSlide?.url,
+      hasCaption: !!nextSlide?.caption,
+      username: nextSlide?.username,
+      childrenCount: nextSlide?.children?.length || 0
+    });
+
+    // Debug: Check if this is the problematic transition
+    if (currentIndex === 18 && nextIndex === 19) {
+      console.log('[DEBUG] Transition from 19 to 20 detected!');
+      console.log('[DEBUG] Slide 19 full object:', slides[18]);
+      console.log('[DEBUG] Slide 20 full object:', slides[19]);
+      console.log('[DEBUG] Current slides array length:', slides.length);
     }
 
     setCurrentIndex(nextIndex);
-  }, [slides.length, currentIndex]);
+  }, [slides, currentIndex]);
 
   // Manual navigation: Next (swipe-left = arrow-right)
   const goToNext = useCallback(() => {
@@ -165,6 +228,37 @@ export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
   }
 
   const currentSlide = slides[currentIndex];
+
+  // Add detailed logging for current slide
+  useEffect(() => {
+    if (currentSlide) {
+      console.log(`Rendering slide ${currentIndex + 1}/${slides.length}:`, {
+        id: currentSlide.id,
+        type: currentSlide.type,
+        url: currentSlide.url,
+        hasChildren: !!(currentSlide.children?.length),
+        childrenUrls: currentSlide.children?.map(c => c.url)
+      });
+
+      // Special logging for slides around 20
+      if (currentIndex >= 17 && currentIndex <= 20) {
+        console.log(`=== SLIDE ${currentIndex + 1} DETAILED ===`);
+        console.log('Current slide object:', currentSlide);
+        console.log('Slide ID:', currentSlide.id);
+        console.log('Type:', currentSlide.type);
+
+        if (currentSlide.type === 'carousel' && currentSlide.children) {
+          console.log('Carousel children count:', currentSlide.children.length);
+          console.log('Children details:', currentSlide.children.map((c, i) => ({
+            index: i,
+            type: c.type,
+            hasUrl: !!c.url,
+            url: c.url
+          })));
+        }
+      }
+    }
+  }, [currentIndex, currentSlide, slides.length]);
 
   if (!currentSlide) {
     return (

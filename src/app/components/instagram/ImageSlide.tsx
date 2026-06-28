@@ -58,15 +58,21 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
 }) => {
   useEffect(() => {
     if (!slide.url) {
+      console.log('[ImageSlide] No URL, advancing immediately');
       onAdvance?.();
       return;
     }
 
+    console.log(`[ImageSlide] Starting timer for ${duration}ms for slide:`, slide.id);
     const timer = setTimeout(() => {
+      console.log(`[ImageSlide] Timer expired, advancing from slide:`, slide.id);
       onAdvance?.();
     }, duration);
 
-    return () => clearTimeout(timer);
+    return () => {
+      console.log(`[ImageSlide] Clearing timer for slide:`, slide.id);
+      clearTimeout(timer);
+    };
   }, [slide, onAdvance, duration]);
 
   if (!slide.url) {

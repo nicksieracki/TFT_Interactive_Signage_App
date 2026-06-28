@@ -59,34 +59,100 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
   const [currentChildIndex, setCurrentChildIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
+  const mountTimeRef = useRef(Date.now());
+
+  // Debug: Track when we're post 19 (we need to know the actual ID format)
+  // For now, let's log all carousel IDs to find the pattern
+  const isPost19 = slide.id?.includes('19') || false; // This might need adjustment
+
+  useEffect(() => {
+    console.log('[CarouselSlide] Carousel mounted with ID:', slide.id, 'Type:', slide.type);
+  }, [slide.id, slide.type]);
 
   // Filter out children with missing URLs
   const validChildren = slide.children?.filter((child) => child.url) || [];
 
+  // Debug logging for post 19
+  useEffect(() => {
+    if (isPost19) {
+      console.log('[CAROUSEL-19] Component mounted/updated:', {
+        slideId: slide.id,
+        childrenCount: validChildren.length,
+        currentChildIndex,
+        mountTime: mountTimeRef.current,
+        timeSinceMount: Date.now() - mountTimeRef.current,
+        onAdvanceRef: onAdvance
+      });
+    }
+
+    return () => {
+      if (isPost19) {
+        console.log('[CAROUSEL-19] Component unmounting!', {
+          slideId: slide.id,
+          finalChildIndex: currentChildIndex,
+          lifetimeMs: Date.now() - mountTimeRef.current
+        });
+      }
+    };
+  }, [isPost19, slide.id, validChildren.length, currentChildIndex, onAdvance]);
+
   useEffect(() => {
     if (validChildren.length === 0) {
+      console.log('[CarouselSlide] No valid children, advancing immediately');
       onAdvance?.();
       return;
     }
 
     const currentChild = validChildren[currentChildIndex];
-    if (!currentChild) return;
+    if (!currentChild) {
+      console.log('[CarouselSlide] Current child undefined, skipping');
+      return;
+    }
 
     // For videos, wait for video to end or max duration
     if (currentChild.type === 'video') {
+      console.log(`[CarouselSlide] Child ${currentChildIndex + 1} is video, waiting for onEnded`);
       return; // Video handles its own advancement via onEnded
     }
 
     // For images, use dwell time
+    console.log(`[CarouselSlide] Starting timer for child ${currentChildIndex + 1}/${validChildren.length}, dwell: ${childDwell}ms`);
+
+    if (isPost19) {
+      console.log('[CAROUSEL-19] Setting timer for child:', {
+        currentChildIndex,
+        isLastChild: currentChildIndex === validChildren.length - 1,
+        willCallOnAdvance: currentChildIndex === validChildren.length - 1
+      });
+    }
+
     const timer = setTimeout(() => {
       if (currentChildIndex < validChildren.length - 1) {
+        console.log(`[CarouselSlide] Moving to next child ${currentChildIndex + 2}`);
         setCurrentChildIndex(prev => prev + 1);
       } else {
+        console.log(`[CarouselSlide] Last child, advancing to next slide`);
+
+        if (isPost19) {
+          console.log('[CAROUSEL-19] About to call onAdvance!', {
+            onAdvanceExists: !!onAdvance,
+            onAdvanceType: typeof onAdvance,
+            slideId: slide.id
+          });
+        }
+
         onAdvance?.();
+
+        if (isPost19) {
+          console.log('[CAROUSEL-19] onAdvance called successfully');
+        }
       }
     }, childDwell);
 
-    return () => clearTimeout(timer);
+    return () => {
+      console.log(`[CarouselSlide] Clearing timer for child ${currentChildIndex + 1}`);
+      clearTimeout(timer);
+    };
   }, [currentChildIndex, validChildren.length, childDwell, onAdvance]);
 
   if (validChildren.length === 0) {
