@@ -29,11 +29,9 @@ const AppContent: React.FC = () => {
   const lastTouchRef = useRef<number>(0);
   const hasInitialized = useRef(false);
 
-  // Parse route from hash for HashRouter
+  // Parse route - HashRouter provides route in pathname
   const activeTab = useMemo((): string => {
-    // With HashRouter, the route is in the hash, not pathname
-    const hash = location.hash.replace(/^#/, ''); // Remove leading #
-    const path = hash.replace(/^\//, '').replace(/\/$/, ''); // Remove leading/trailing slashes
+    const path = location.pathname.replace(/^\//, '').replace(/\/$/, '');
     const segments = path.split('/').filter(Boolean);
 
     if (segments.length === 0) {
@@ -47,7 +45,7 @@ const AppContent: React.FC = () => {
       const secondSegment = segments[1];
       return secondSegment && VALID_PAGES.includes(secondSegment as ValidPage) ? secondSegment : '';
     }
-  }, [location.hash]);
+  }, [location.pathname]);
 
   const hideSignage = useMemo(
     () => VALID_PAGES.includes(activeTab as ValidPage),
