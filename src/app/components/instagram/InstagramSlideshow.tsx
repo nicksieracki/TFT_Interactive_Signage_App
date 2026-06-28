@@ -295,15 +295,16 @@ export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
         }
       >
         {currentSlide.type === 'image' && (
-          <ImageSlide slide={currentSlide} onAdvance={advanceToNextSlide} />
+          <ImageSlide key={currentSlide.id} slide={currentSlide} onAdvance={advanceToNextSlide} />
         )}
 
         {currentSlide.type === 'video' && (
-          <VideoSlide slide={currentSlide} onAdvance={advanceToNextSlide} />
+          <VideoSlide key={currentSlide.id} slide={currentSlide} onAdvance={advanceToNextSlide} />
         )}
 
         {currentSlide.type === 'carousel' && (
           <CarouselSlide
+            key={currentSlide.id}
             slide={currentSlide}
             onAdvance={advanceToNextSlide}
           />
