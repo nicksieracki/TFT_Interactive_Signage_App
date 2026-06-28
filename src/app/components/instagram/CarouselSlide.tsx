@@ -72,6 +72,16 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
   // Filter out children with missing URLs
   const validChildren = slide.children?.filter((child) => child.url) || [];
 
+  // Debug: Log what's happening with children
+  console.log('[CarouselSlide] Processing children:', {
+    slideId: slide.id,
+    rawChildren: slide.children,
+    validChildrenCount: validChildren.length,
+    currentChildIndex,
+    currentChildExists: !!validChildren[currentChildIndex],
+    currentChild: validChildren[currentChildIndex]
+  });
+
   // Debug logging for post 19
   useEffect(() => {
     if (isPost19) {
@@ -97,6 +107,14 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
   }, [isPost19, slide.id, validChildren.length, currentChildIndex, onAdvance]);
 
   useEffect(() => {
+    console.log('[CarouselSlide] Timer effect running:', {
+      slideId: slide.id,
+      validChildrenLength: validChildren.length,
+      currentChildIndex,
+      validChildrenArray: validChildren,
+      childAtIndex: validChildren[currentChildIndex]
+    });
+
     if (validChildren.length === 0) {
       console.log('[CarouselSlide] No valid children, advancing immediately');
       onAdvance?.();
@@ -105,7 +123,13 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
 
     const currentChild = validChildren[currentChildIndex];
     if (!currentChild) {
-      console.log('[CarouselSlide] Current child undefined, skipping');
+      console.log('[CarouselSlide] Current child undefined, skipping', {
+        currentChildIndex,
+        validChildrenLength: validChildren.length,
+        validChildren: validChildren,
+        typeOfValidChildren: typeof validChildren,
+        isArray: Array.isArray(validChildren)
+      });
       return;
     }
 
