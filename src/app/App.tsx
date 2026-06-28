@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useRef } from 'react';
+import React, { useMemo, useState, useEffect, useRef, useCallback } from 'react';
 import { HashRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { SignagePlayer } from './components/SignagePlayer';
 import { Icon } from './components/Icon';
@@ -74,7 +74,7 @@ const AppContent: React.FC = () => {
   };
 
   // Show nav on touch, with debouncing to prevent interference
-  const handleTouch = () => {
+  const handleTouch = useCallback(() => {
     const now = Date.now();
     // Debounce rapid touches
     if (now - lastTouchRef.current < 100) return;
@@ -91,7 +91,7 @@ const AppContent: React.FC = () => {
     hideTimerRef.current = setTimeout(() => {
       setShowNav(false);
     }, 5000);
-  };
+  }, []);
 
   // Touch-to-reveal nav logic (only for immersive content pages)
   useEffect(() => {
@@ -200,7 +200,7 @@ const AppContent: React.FC = () => {
         clearTimeout(hideTimerRef.current);
       }
     };
-  }, [alwaysShowNav, touchToRevealNav]);
+  }, [alwaysShowNav, touchToRevealNav, handleTouch]);
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-[var(--mat-sys-surface)]">

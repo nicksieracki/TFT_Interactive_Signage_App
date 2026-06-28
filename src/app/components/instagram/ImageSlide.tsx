@@ -63,80 +63,94 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
   const timeAgo = formatRelativeTime(slide.timestamp);
 
   return (
-    <div className="flex flex-col h-full w-full bg-black">
-      {/* Timestamp header */}
-      <div className="flex-shrink-0 p-6 pb-3">
-        <p className="text-white/80 text-lg font-medium">
-          {timeAgo}
-        </p>
-      </div>
+    <div className="relative h-full w-full overflow-hidden">
+      {/* Blurred background */}
+      <div
+        className="absolute inset-0 bg-cover bg-center blur-2xl scale-110 opacity-60"
+        style={{
+          backgroundImage: `url(${slide.url})`,
+        }}
+      />
 
-      {/* Image container - takes remaining space */}
-      <div className="flex-1 min-h-0 relative flex items-center justify-center px-6">
-        <img
-          src={slide.url}
-          alt={slide.caption || ''}
-          className="max-h-full max-w-full object-contain rounded-lg"
-          onError={onAdvance}
-        />
-      </div>
+      {/* Dark overlay for better contrast */}
+      <div className="absolute inset-0 bg-black/40" />
 
-      {/* Caption and branding footer */}
-      <div className="flex-shrink-0 p-6 pt-3 bg-gradient-to-t from-black/80 to-transparent">
-        {slide.caption && (
-          <p className="text-white text-lg leading-relaxed mb-4 max-h-32 overflow-y-auto">
-            {slide.caption}
+      {/* Content container */}
+      <div className="relative flex flex-col h-full w-full">
+        {/* Timestamp header */}
+        <div className="flex-shrink-0 p-6 pb-3">
+          <p className="text-white/90 text-lg font-medium drop-shadow-lg">
+            {timeAgo}
           </p>
-        )}
+        </div>
 
-        <div className="flex items-center justify-between">
-          <p className="text-white/90 text-lg font-medium">
-            @{slide.username}
-          </p>
+        {/* Image container - takes remaining space */}
+        <div className="flex-1 min-h-0 relative flex items-center justify-center px-6">
+          <img
+            src={slide.url}
+            alt={slide.caption || ''}
+            className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
+            onError={onAdvance}
+          />
+        </div>
 
-          {/* Instagram icon */}
-          <svg
-            className="w-8 h-8"
-            viewBox="0 0 24 24"
-            fill="none"
-          >
-            <rect
-              x="2"
-              y="2"
-              width="20"
-              height="20"
-              rx="5"
-              stroke="url(#instagram-gradient)"
-              strokeWidth="2"
-            />
-            <circle
-              cx="12"
-              cy="12"
-              r="4"
-              stroke="url(#instagram-gradient)"
-              strokeWidth="2"
-            />
-            <circle
-              cx="18"
-              cy="6"
-              r="1.5"
-              fill="url(#instagram-gradient)"
-            />
-            <defs>
-              <linearGradient
-                id="instagram-gradient"
-                x1="0%"
-                y1="100%"
-                x2="100%"
-                y2="0%"
-              >
-                <stop offset="0%" stopColor="#FED576" />
-                <stop offset="26%" stopColor="#F47133" />
-                <stop offset="61%" stopColor="#BC3081" />
-                <stop offset="100%" stopColor="#4F5BD5" />
-              </linearGradient>
-            </defs>
-          </svg>
+        {/* Caption and branding footer */}
+        <div className="flex-shrink-0 p-6 pt-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+          {slide.caption && (
+            <p className="text-white text-lg leading-relaxed mb-4 max-h-32 overflow-y-auto drop-shadow-lg">
+              {slide.caption}
+            </p>
+          )}
+
+          <div className="flex items-center justify-between">
+            <p className="text-white text-lg font-medium drop-shadow-lg">
+              @{slide.username}
+            </p>
+
+            {/* Instagram icon */}
+            <svg
+              className="w-8 h-8 drop-shadow-lg"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <rect
+                x="2"
+                y="2"
+                width="20"
+                height="20"
+                rx="5"
+                stroke="url(#instagram-gradient)"
+                strokeWidth="2"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="4"
+                stroke="url(#instagram-gradient)"
+                strokeWidth="2"
+              />
+              <circle
+                cx="18"
+                cy="6"
+                r="1.5"
+                fill="url(#instagram-gradient)"
+              />
+              <defs>
+                <linearGradient
+                  id="instagram-gradient"
+                  x1="0%"
+                  y1="100%"
+                  x2="100%"
+                  y2="0%"
+                >
+                  <stop offset="0%" stopColor="#FED576" />
+                  <stop offset="26%" stopColor="#F47133" />
+                  <stop offset="61%" stopColor="#BC3081" />
+                  <stop offset="100%" stopColor="#4F5BD5" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
         </div>
       </div>
     </div>
