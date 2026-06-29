@@ -23,7 +23,7 @@ interface InstagramSlideshowProps {
  */
 export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
   slides,
-  layoutMode: _layoutMode = 'vertical', // Reserved for future use
+  layoutMode = 'vertical',
   className = '',
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -295,11 +295,11 @@ export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
         }
       >
         {currentSlide.type === 'image' && (
-          <ImageSlide key={currentSlide.id} slide={currentSlide} onAdvance={advanceToNextSlide} />
+          <ImageSlide key={currentSlide.id} slide={currentSlide} onAdvance={advanceToNextSlide} isHorizontal={layoutMode === 'horizontal'} />
         )}
 
         {currentSlide.type === 'video' && (
-          <VideoSlide key={currentSlide.id} slide={currentSlide} onAdvance={advanceToNextSlide} />
+          <VideoSlide key={currentSlide.id} slide={currentSlide} onAdvance={advanceToNextSlide} isHorizontal={layoutMode === 'horizontal'} />
         )}
 
         {currentSlide.type === 'carousel' && (
@@ -307,6 +307,7 @@ export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
             key={currentSlide.id}
             slide={currentSlide}
             onAdvance={advanceToNextSlide}
+            isHorizontal={layoutMode === 'horizontal'}
           />
         )}
       </ErrorBoundary>

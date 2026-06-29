@@ -5,6 +5,7 @@ interface CarouselSlideProps {
   slide: Slide;
   onAdvance?: () => void;
   childDwell?: number; // milliseconds per child (default 5s)
+  isHorizontal?: boolean;
 }
 
 /**
@@ -55,6 +56,7 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
   slide,
   onAdvance,
   childDwell = 5000,
+  isHorizontal = false,
 }) => {
   const [currentChildIndex, setCurrentChildIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -209,6 +211,157 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
   // Use thumbnail or current media for blur background
   const blurSource = currentChild.thumbnail || currentChild.url;
 
+  // Horizontal layout - full screen
+  if (isHorizontal) {
+    return (
+      <div className="relative h-full w-full bg-gradient-to-br from-purple-900/20 via-black to-pink-900/20 flex flex-col">
+        {/* Blurred background */}
+        <div className="absolute inset-0">
+          {currentChild.type === 'image' || currentChild.thumbnail ? (
+            <div
+              className="absolute inset-0 bg-cover bg-center blur-2xl scale-110 opacity-40"
+              style={{
+                backgroundImage: `url(${blurSource})`,
+              }}
+            />
+          ) : (
+            <video
+              ref={backgroundVideoRef}
+              src={currentChild.url}
+              className="absolute inset-0 w-full h-full object-cover blur-2xl scale-110 opacity-40"
+              autoPlay
+              muted
+              loop
+              playsInline
+            />
+          )}
+          <div className="absolute inset-0 bg-black/60" />
+        </div>
+
+        {/* Content container */}
+        <div className="relative flex-1 flex flex-col">
+          {/* Header - floating over media */}
+          <div className="absolute top-0 left-0 right-0 p-6 bg-gradient-to-b from-black/80 to-transparent z-10">
+            <p className="text-white/90 text-sm font-medium drop-shadow-lg">
+              {timeAgo}
+            </p>
+          </div>
+
+          {/* Media container with carousel indicators - full height */}
+          <div className="flex-1 flex items-center justify-center px-8 pb-[104px]">
+            {/* Carousel indicators at top */}
+            {validChildren.length > 1 && (
+              <div className="absolute top-16 left-8 right-8 flex justify-center gap-1 z-10">
+                {validChildren.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`h-1 flex-1 max-w-20 rounded-full transition-all duration-500 ${
+                      index === currentChildIndex
+                        ? 'bg-white shadow-lg'
+                        : 'bg-white/30'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Media content */}
+            {currentChild.type === 'image' ? (
+              <img
+                src={currentChild.url}
+                alt={slide.caption || ''}
+                className="max-h-full max-w-full object-contain drop-shadow-2xl"
+                onError={handleMediaError}
+              />
+            ) : (
+              <video
+                ref={videoRef}
+                key={currentChild.id}
+                src={currentChild.url}
+                poster={currentChild.thumbnail}
+                className="max-h-full max-w-full object-contain drop-shadow-2xl"
+                autoPlay
+                muted
+                playsInline
+                onEnded={handleVideoEnded}
+                onError={handleMediaError}
+              />
+            )}
+
+            {/* Page counter */}
+            {validChildren.length > 1 && (
+              <div className="absolute bottom-4 right-8 bg-black/50 backdrop-blur-sm px-2 py-1 rounded-full">
+                <p className="text-white/90 text-xs font-medium">
+                  {currentChildIndex + 1} / {validChildren.length}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Footer - floating over media */}
+          <div className="absolute bottom-0 left-0 right-0 pb-[104px] px-6 bg-gradient-to-t from-black/90 via-black/60 to-transparent z-10">
+            {slide.caption && (
+              <p className="text-white text-sm leading-snug mb-2 max-h-20 overflow-y-auto drop-shadow-lg line-clamp-3">
+                {slide.caption}
+              </p>
+            )}
+
+            <div className="flex items-center justify-between">
+              <p className="text-white text-sm font-medium drop-shadow-lg">
+                @{slide.username}
+              </p>
+
+              {/* Instagram icon */}
+              <svg
+                className="w-6 h-6 drop-shadow-lg"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <rect
+                  x="2"
+                  y="2"
+                  width="20"
+                  height="20"
+                  rx="5"
+                  stroke="url(#instagram-gradient-carousel)"
+                  strokeWidth="2"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="4"
+                  stroke="url(#instagram-gradient-carousel)"
+                  strokeWidth="2"
+                />
+                <circle
+                  cx="18"
+                  cy="6"
+                  r="1.5"
+                  fill="url(#instagram-gradient-carousel)"
+                />
+                <defs>
+                  <linearGradient
+                    id="instagram-gradient-carousel"
+                    x1="0%"
+                    y1="100%"
+                    x2="100%"
+                    y2="0%"
+                  >
+                    <stop offset="0%" stopColor="#FED576" />
+                    <stop offset="26%" stopColor="#F47133" />
+                    <stop offset="61%" stopColor="#BC3081" />
+                    <stop offset="100%" stopColor="#4F5BD5" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Vertical layout - compact with letterboxing
   return (
     <div className="h-full w-full bg-black flex items-center justify-center">
       {/* Compact player container */}

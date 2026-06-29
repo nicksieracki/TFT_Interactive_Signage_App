@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSystem } from '../SystemContext';
 import { useInstagramSlides } from '../hooks/useInstagramSlides';
 import { InstagramSlideshow } from '../components/instagram/InstagramSlideshow';
@@ -6,6 +6,15 @@ import { InstagramSlideshow } from '../components/instagram/InstagramSlideshow';
 export const InstagramPage: React.FC = () => {
   const { system } = useSystem();
   const { slides, isConnected, error } = useInstagramSlides(system ?? undefined);
+  const [isHorizontal, setIsHorizontal] = useState(() => window.innerWidth > window.innerHeight);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsHorizontal(window.innerWidth > window.innerHeight);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Error state
   if (error) {
@@ -34,7 +43,7 @@ export const InstagramPage: React.FC = () => {
   return (
     <InstagramSlideshow
       slides={slides}
-      layoutMode="vertical"
+      layoutMode={isHorizontal ? "horizontal" : "vertical"}
       className="h-full w-full"
     />
   );
