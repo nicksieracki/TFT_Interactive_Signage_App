@@ -70,13 +70,17 @@ const AppContent: React.FC = () => {
 
   // No longer needed - nav visibility is controlled by whether we're in signage mode
 
-  // Simple navigation with system ID in path
+  // Simple navigation with system ID in path, preserving query params
   const navigateToPage = (page: string) => {
+    // Preserve query parameters from the hash fragment
+    const hashParts = window.location.hash.split('?');
+    const queryParams = hashParts.length > 1 ? `?${hashParts[1]}` : '';
+
     const path = page === ''
       ? (system ? `/${system}` : '/')
       : (system ? `/${system}/${page}` : `/${page}`);
 
-    navigate(path, { replace: true });
+    navigate(`${path}${queryParams}`, { replace: true });
   };
 
   // No longer need touch-to-reveal logic since nav is always visible when needed

@@ -21,8 +21,12 @@ export const useIdle = () => {
   const timeoutSecs = DEFAULT_TIMEOUT_SECS; // Use default timeout
 
   const onIdle = useCallback(() => {
-    // Build the home route with system if present
+    // Build the home route with system if present, preserving query params
     const homeRoute = system ? `/${system}` : '/';
+
+    // Preserve query parameters from the hash fragment
+    const hashParts = window.location.hash.split('?');
+    const queryParams = hashParts.length > 1 ? `?${hashParts[1]}` : '';
 
     console.log('[useIdle] onIdle triggered:', {
       system,
@@ -35,8 +39,8 @@ export const useIdle = () => {
       return;
     }
 
-    // Navigate to home route
-    navigate(homeRoute);
+    // Navigate to home route with query params preserved
+    navigate(`${homeRoute}${queryParams}`);
   }, [system, location.pathname, navigate]);
 
   const reset = useCallback(() => {

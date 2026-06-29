@@ -14,9 +14,25 @@ export const SignagePlayer: React.FC<SignagePlayerProps> = ({ hide = false }) =>
 
   const embedUrl = useMemo(() => {
     const base = signageUrl.replace(/\/$/, '');
+
+    // Extract API key from current URL hash fragment
+    // Only pass API key to same-origin signage app for security
+    const hashParts = window.location.hash.split('?');
+    let apiKeyParam = '';
+
+    // Security check: only pass API key to relative URLs (same origin)
+    if (!signageUrl.startsWith('http') && hashParts.length > 1 && hashParts[1]?.includes('x-api-key=')) {
+      // Extract only the API key parameter, not other potentially sensitive params
+      const params = new URLSearchParams(hashParts[1]);
+      const apiKey = params.get('x-api-key');
+      if (apiKey) {
+        apiKeyParam = `?x-api-key=${encodeURIComponent(apiKey)}`;
+      }
+    }
+
     return system
-      ? `${base}/#/signage/${encodeURIComponent(system)}`
-      : `${base}/#/signage`;
+      ? `${base}/#/signage/${encodeURIComponent(system)}${apiKeyParam}`
+      : `${base}/#/signage${apiKeyParam}`;
   }, [signageUrl, system]);
 
   useEffect(() => {
