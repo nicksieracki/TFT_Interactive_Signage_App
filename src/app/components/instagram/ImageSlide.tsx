@@ -94,17 +94,17 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
       {/* Dark overlay for better contrast */}
       <div className="absolute inset-0 bg-black/40" />
 
-      {/* Content container */}
-      <div className="relative flex flex-col h-full w-full">
-        {/* Timestamp header */}
-        <div className="flex-shrink-0 p-6 pb-3">
-          <p className="text-white/90 text-lg font-medium drop-shadow-lg">
+      {/* Content container - with padding to clear nav */}
+      <div className="relative flex flex-col h-full w-full pb-[104px]">
+        {/* Timestamp header - minimal height */}
+        <div className="absolute top-4 left-4 z-10">
+          <p className="text-white/80 text-xs font-medium drop-shadow-lg bg-black/30 px-2 py-1 rounded">
             {timeAgo}
           </p>
         </div>
 
         {/* Image container - takes remaining space */}
-        <div className="flex-1 min-h-0 relative flex items-center justify-center px-6">
+        <div className="flex-1 min-h-0 relative flex items-center justify-center px-4 pt-12">
           <img
             src={slide.url}
             alt={slide.caption || ''}
@@ -113,22 +113,22 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
           />
         </div>
 
-        {/* Caption and branding footer */}
-        <div className="flex-shrink-0 p-6 pt-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+        {/* Caption and branding footer - positioned above nav */}
+        <div className="flex-shrink-0 px-4 py-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
           {slide.caption && (
-            <p className="text-white text-lg leading-relaxed mb-4 max-h-32 overflow-y-auto drop-shadow-lg">
+            <p className="text-white text-sm leading-snug mb-2 max-h-20 overflow-y-auto drop-shadow-lg line-clamp-3">
               {slide.caption}
             </p>
           )}
 
           <div className="flex items-center justify-between">
-            <p className="text-white text-lg font-medium drop-shadow-lg">
+            <p className="text-white text-sm font-medium drop-shadow-lg">
               @{slide.username}
             </p>
 
             {/* Instagram icon */}
             <svg
-              className="w-8 h-8 drop-shadow-lg"
+              className="w-6 h-6 drop-shadow-lg"
               viewBox="0 0 24 24"
               fill="none"
             >

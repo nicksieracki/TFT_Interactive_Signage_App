@@ -113,12 +113,10 @@ const AppContent: React.FC = () => {
           </div>
         </div>
       ) : (
-        // Vertical full-screen layout with proper content spacing
-        <div className="h-full w-full flex flex-col">
-          {/* Content area that always respects nav height */}
-          <div className="flex-1 relative overflow-hidden pb-[104px]">
-            <SignagePlayer hide={shouldHideSignage} />
-            <div className={`absolute inset-0 ${!shouldHideSignage ? 'pointer-events-none' : ''}`}>
+        // Vertical full-screen layout
+        <>
+          <SignagePlayer hide={shouldHideSignage} />
+          <div className={`absolute inset-0 z-10 ${!shouldHideSignage ? 'pointer-events-none' : ''}`}>
               <Routes>
                 {/* Routes without system */}
                 <Route path="/" element={<SignagePage />} />
@@ -136,14 +134,13 @@ const AppContent: React.FC = () => {
                 <Route path="/:system/instagram" element={<InstagramPage />} />
                 <Route path="/:system/game" element={<GamePage />} />
               </Routes>
-            </div>
           </div>
-        </div>
+        </>
       )}
 
-      {/* Navigation bar - fixed position, always visible */}
+      {/* Navigation bar - absolute position, floating overlay, always visible */}
       <div
-        className={`fixed bottom-0 ${isHorizontal ? 'left-1/2 right-0' : 'left-0 right-0'} flex items-center justify-center p-4 z-50 translate-y-0 opacity-100`}
+        className={`absolute bottom-0 ${isHorizontal ? 'left-1/2 right-0' : 'left-0 right-0'} flex items-center justify-center p-4 z-50 translate-y-0 opacity-100`}
       >
         <nav
           className="flex items-center gap-2 rounded-2xl border border-white/10 bg-gradient-to-r from-gray-900/95 via-black/95 to-gray-900/95 px-3 py-2 text-white shadow-2xl backdrop-blur-xl select-none"
