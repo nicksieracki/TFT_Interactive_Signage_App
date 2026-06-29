@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { getModule } from '@placeos/ts-client';
 import { Slide } from '../types/instagram';
-import { useAuth } from '../useAuth';
+import { useAuth } from '../AuthContext';
 
 /**
  * Hook to bind to the PlaceOS Instagram driver `slides` state.
@@ -16,7 +16,9 @@ import { useAuth } from '../useAuth';
  * later real push — listen()-before-bind() fixes that.)
  */
 export const useInstagramSlides = (systemId?: string) => {
-    const { isAuthenticated, loading } = useAuth();
+    const auth = useAuth();
+    const isAuthenticated = auth?.isAuthenticated || false;
+    const loading = auth?.loading || false;
     const [slides, setSlides] = useState<Slide[]>([]);
     const [isConnected, setIsConnected] = useState(false);
     const [error, setError] = useState<string | null>(null);

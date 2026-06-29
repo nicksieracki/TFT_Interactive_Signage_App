@@ -4,6 +4,12 @@ import type { PlaceAuthOptions, PlaceUser } from "@placeos/ts-client";
 import { logout, setup, showUser } from "@placeos/ts-client";
 import { lastValueFrom } from "rxjs";
 
+declare global {
+  interface Window {
+    debug: boolean;
+  }
+}
+
 interface AuthData {
   user: PlaceUser | null;
   isAuthenticated: boolean;
@@ -75,7 +81,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true); // Crucial for the initial load
 
   useEffect(() => {
-    (window as any).debug = true;
+    window.debug = true;
     const checkAuth = async () => {
       try {
         await setupPlace({

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useSystem } from '../SystemContext';
+import { useParams } from 'react-router-dom';
 import { useInstagramSlides } from '../hooks/useInstagramSlides';
 import { InstagramSlideshow } from '../components/instagram/InstagramSlideshow';
 
 export const InstagramPage: React.FC = () => {
-  const { system } = useSystem();
-  const { slides, isConnected, error } = useInstagramSlides(system ?? undefined);
+  const { system } = useParams<{ system?: string }>();
+  const { slides, isConnected, error } = useInstagramSlides(system);
   const [isHorizontal, setIsHorizontal] = useState(() => window.innerWidth > window.innerHeight);
 
   useEffect(() => {

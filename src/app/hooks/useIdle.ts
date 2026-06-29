@@ -1,7 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useSettings } from '../SettingsContext';
-import { useSystem } from '../SystemContext';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 const DEFAULT_TIMEOUT_SECS = 300; // 5 minutes - long enough for iframe interactions
 const IDLE_EVENTS: Array<keyof DocumentEventMap> = [
@@ -16,12 +14,11 @@ const IDLE_EVENTS: Array<keyof DocumentEventMap> = [
 export const useIdle = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const settings = useSettings();
-  const { system } = useSystem();
+  const { system } = useParams<{ system?: string }>();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const startedRef = useRef(false);
 
-  const timeoutSecs = settings.get<number>('idle_timeout_secs') || DEFAULT_TIMEOUT_SECS;
+  const timeoutSecs = DEFAULT_TIMEOUT_SECS; // Use default timeout
 
   const onIdle = useCallback(() => {
     // Build the home route with system if present

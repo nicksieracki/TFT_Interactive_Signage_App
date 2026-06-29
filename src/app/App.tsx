@@ -1,11 +1,8 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { HashRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { HashRouter, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { SignagePlayer } from './components/SignagePlayer';
 import { Icon } from './components/Icon';
 import { AuthProvider } from './AuthContext';
-// import { PlaceOSProvider } from './PlaceOSContext'; // Not needed - we don't query systems
-import { SettingsProvider } from './SettingsContext';
-import { SystemProvider, useSystem } from './SystemContext';
 import { useIdle } from './hooks/useIdle';
 import { DirectoryPage } from './pages/DirectoryPage';
 import { EventsPage } from './pages/EventsPage';
@@ -21,7 +18,7 @@ type ValidPage = typeof VALID_PAGES[number];
 const AppContent: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { system } = useSystem();
+  const { system } = useParams<{ system?: string }>();
 
   // Nav is always visible when not in signage mode, no need for show/hide state
 
@@ -226,11 +223,7 @@ export const App: React.FC = () => {
   return (
     <HashRouter>
       <AuthProvider>
-        <SettingsProvider>
-          <SystemProvider>
-            <AppContent />
-          </SystemProvider>
-        </SettingsProvider>
+        <AppContent />
       </AuthProvider>
     </HashRouter>
   );

@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useSettings } from '../SettingsContext';
-import { useSystem } from '../SystemContext';
+import { useParams } from 'react-router-dom';
 import { Icon } from './Icon';
 
 interface SignagePlayerProps {
@@ -8,11 +7,10 @@ interface SignagePlayerProps {
 }
 
 export const SignagePlayer: React.FC<SignagePlayerProps> = ({ hide = false }) => {
-  const settings = useSettings();
-  const { system } = useSystem();
+  const { system } = useParams<{ system?: string }>();
   const frameRef = useRef<HTMLIFrameElement>(null);
 
-  const signageUrl = settings.get<string>('signage_url') || '/signage';
+  const signageUrl = '/signage'; // Default signage URL
 
   const embedUrl = useMemo(() => {
     const base = signageUrl.replace(/\/$/, '');
