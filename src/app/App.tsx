@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { HashRouter, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { HashRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { SignagePlayer } from './components/SignagePlayer';
 import { Icon } from './components/Icon';
 import { AuthProvider } from './AuthContext';
@@ -18,7 +18,21 @@ type ValidPage = typeof VALID_PAGES[number];
 const AppContent: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { system } = useParams<{ system?: string }>();
+
+  // Extract system from current pathname since useParams doesn't work outside Routes
+  const getSystemFromPath = () => {
+    const segments = location.pathname.split('/').filter(Boolean);
+    if (segments.length === 0) return null;
+
+    const firstSegment = segments[0];
+    // If first segment is not a valid page, it's the system ID
+    if (!VALID_PAGES.includes(firstSegment as ValidPage)) {
+      return firstSegment;
+    }
+    return null;
+  };
+
+  const system = getSystemFromPath();
 
   // Nav is always visible when not in signage mode, no need for show/hide state
 
