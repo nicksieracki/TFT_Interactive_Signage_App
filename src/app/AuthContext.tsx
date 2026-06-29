@@ -1,18 +1,15 @@
-import { createContext, useEffect, useState } from "react";
-import type { ReactNode } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 import type { PlaceAuthOptions, PlaceUser } from "@placeos/ts-client";
-import { logout, setup, currentUser } from "@placeos/ts-client";
+import { logout, setup, showUser } from "@placeos/ts-client";
 import { lastValueFrom } from "rxjs";
-import { AUTHORIZED_GROUP } from "./models";
 
-type AuthData = {
+interface AuthData {
   user: PlaceUser | null;
   isAuthenticated: boolean;
-  isForbidden: boolean;
   loading: boolean;
   logOut: () => void;
-};
+}
 
 export const AuthContext = createContext<AuthData | null>(null);
 
@@ -70,15 +67,15 @@ const setupPlace = (settings: PlaceSettings): Promise<void> => {
   return setup(config);
 };
 
-type AuthProviderProps = { children: ReactNode };
+// --- The Auth Provider ---
 
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<PlaceUser | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isForbidden, setIsForbidden] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Crucial for the initial load
 
   useEffect(() => {
+    (window as any).debug = true;
     const checkAuth = async () => {
       try {
         await setupPlace({
@@ -87,37 +84,39 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           local_login: false,
           mock: false,
         });
-        const user = await lastValueFrom(currentUser());
-        const authorized = (Object.values(AUTHORIZED_GROUP) as Array<string>).some(group => user.groups?.includes(group) ?? false);
+        const user = await lastValueFrom(showUser("current"));
         setUser(user);
         setIsAuthenticated(true);
-        setIsForbidden(!authorized);
       } catch {
+        // If the API call fails, the user is not logged in
         setUser(null);
         setIsAuthenticated(false);
       } finally {
-        // Unblocks the UI regardless of auth outcome
+        // This is critical to unblock the UI
         setLoading(false);
       }
     };
 
     checkAuth();
-  }, []);
+  }, []); // Empty array ensures this runs only once on app startup
 
   const logOut = () => logout();
 
   const value = {
     user,
     isAuthenticated,
-    isForbidden,
     loading,
     logOut,
   };
 
   return (
-      <AuthContext.Provider value={value}>
-        {!loading && children}
-      </AuthContext.Provider>
+    <AuthContext.Provider value={value}>
+      {/* Don't render children until the initial check is complete */}
+      {!loading && children}
+    </AuthContext.Provider>
   );
 };
 
+export const useAuth = () => {
+  return useContext(AuthContext);
+};

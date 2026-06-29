@@ -68,7 +68,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const loadOrganisation = async () => {
     const org_list = await lastValueFrom(
-      queryZones({ tags: 'org', include_children_count: true }).pipe(
+      queryZones({ tags: 'org' }).pipe(
         catchError(() => of({ data: [] } as { data: Array<{ id: string }> })),
       ),
     );

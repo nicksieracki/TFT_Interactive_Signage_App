@@ -3,7 +3,7 @@ import { HashRouter, Route, Routes, useLocation, useNavigate } from 'react-route
 import { SignagePlayer } from './components/SignagePlayer';
 import { Icon } from './components/Icon';
 import { AuthProvider } from './AuthContext';
-import { PlaceOSProvider } from './PlaceOSContext';
+// import { PlaceOSProvider } from './PlaceOSContext'; // Not needed - we don't query systems
 import { SettingsProvider } from './SettingsContext';
 import { SystemProvider, useSystem } from './SystemContext';
 import { useIdle } from './hooks/useIdle';
@@ -226,13 +226,11 @@ export const App: React.FC = () => {
   return (
     <HashRouter>
       <AuthProvider>
-        <PlaceOSProvider>
-          <SettingsProvider>
-            <SystemProvider>
-              <AppContent />
-            </SystemProvider>
-          </SettingsProvider>
-        </PlaceOSProvider>
+        <SettingsProvider>
+          <SystemProvider>
+            <AppContent />
+          </SystemProvider>
+        </SettingsProvider>
       </AuthProvider>
     </HashRouter>
   );
