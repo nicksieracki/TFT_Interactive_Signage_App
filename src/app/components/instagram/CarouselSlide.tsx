@@ -247,111 +247,112 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
 
           {/* Media container with carousel indicators */}
           <div className="relative flex items-center justify-center px-6" style={{ minHeight: '60vh' }}>
-          {/* Carousel indicators at top */}
-          {validChildren.length > 1 && (
-            <div className="absolute top-2 left-4 right-4 flex justify-center gap-1 z-10">
-              {validChildren.map((_, index) => (
-                <div
-                  key={index}
-                  className={`h-1 flex-1 max-w-20 rounded-full transition-all duration-500 ${
-                    index === currentChildIndex
-                      ? 'bg-white shadow-lg'
-                      : 'bg-white/30'
-                  }`}
-                />
-              ))}
-            </div>
-          )}
+            {/* Carousel indicators at top */}
+            {validChildren.length > 1 && (
+              <div className="absolute top-2 left-4 right-4 flex justify-center gap-1 z-10">
+                {validChildren.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`h-1 flex-1 max-w-20 rounded-full transition-all duration-500 ${
+                      index === currentChildIndex
+                        ? 'bg-white shadow-lg'
+                        : 'bg-white/30'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
 
-          {/* Media content */}
-          {currentChild.type === 'image' ? (
-            <img
-              src={currentChild.url}
-              alt={slide.caption || ''}
-              className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
-              onError={handleMediaError}
-            />
-          ) : (
-            <video
-              ref={videoRef}
-              key={currentChild.id}
-              src={currentChild.url}
-              poster={currentChild.thumbnail}
-              className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
-              autoPlay
-              muted
-              playsInline
-              onEnded={handleVideoEnded}
-              onError={handleMediaError}
-            />
-          )}
+            {/* Media content */}
+            {currentChild.type === 'image' ? (
+              <img
+                src={currentChild.url}
+                alt={slide.caption || ''}
+                className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
+                onError={handleMediaError}
+              />
+            ) : (
+              <video
+                ref={videoRef}
+                key={currentChild.id}
+                src={currentChild.url}
+                poster={currentChild.thumbnail}
+                className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
+                autoPlay
+                muted
+                playsInline
+                onEnded={handleVideoEnded}
+                onError={handleMediaError}
+              />
+            )}
 
-          {/* Page counter */}
-          {validChildren.length > 1 && (
-            <div className="absolute bottom-2 right-4 bg-black/50 backdrop-blur-sm px-2 py-1 rounded-full">
-              <p className="text-white/90 text-xs font-medium">
-                {currentChildIndex + 1} / {validChildren.length}
+            {/* Page counter */}
+            {validChildren.length > 1 && (
+              <div className="absolute bottom-2 right-4 bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full">
+                <p className="text-white/90 text-sm font-medium">
+                  {currentChildIndex + 1} / {validChildren.length}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="flex-shrink-0 p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
+            {slide.caption && (
+              <p className="text-white text-base leading-relaxed mb-3 max-h-24 overflow-y-auto drop-shadow-lg line-clamp-3">
+                {slide.caption}
               </p>
+            )}
+
+            <div className="flex items-center justify-between">
+              <p className="text-white text-base font-medium drop-shadow-lg">
+                @{slide.username}
+              </p>
+
+              {/* Instagram icon */}
+              <svg
+                className="w-7 h-7 drop-shadow-lg"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <rect
+                  x="2"
+                  y="2"
+                  width="20"
+                  height="20"
+                  rx="5"
+                  stroke="url(#instagram-gradient-carousel)"
+                  strokeWidth="2"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="4"
+                  stroke="url(#instagram-gradient-carousel)"
+                  strokeWidth="2"
+                />
+                <circle
+                  cx="18"
+                  cy="6"
+                  r="1.5"
+                  fill="url(#instagram-gradient-carousel)"
+                />
+                <defs>
+                  <linearGradient
+                    id="instagram-gradient-carousel"
+                    x1="0%"
+                    y1="100%"
+                    x2="100%"
+                    y2="0%"
+                  >
+                    <stop offset="0%" stopColor="#FED576" />
+                    <stop offset="26%" stopColor="#F47133" />
+                    <stop offset="61%" stopColor="#BC3081" />
+                    <stop offset="100%" stopColor="#4F5BD5" />
+                  </linearGradient>
+                </defs>
+              </svg>
             </div>
-          )}
-        </div>
-
-        {/* Caption and branding footer - positioned above nav */}
-        <div className="flex-shrink-0 px-4 py-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-          {slide.caption && (
-            <p className="text-white text-sm leading-snug mb-2 max-h-20 overflow-y-auto drop-shadow-lg line-clamp-3">
-              {slide.caption}
-            </p>
-          )}
-
-          <div className="flex items-center justify-between">
-            <p className="text-white text-sm font-medium drop-shadow-lg">
-              @{slide.username}
-            </p>
-
-            {/* Instagram icon */}
-            <svg
-              className="w-6 h-6 drop-shadow-lg"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              <rect
-                x="2"
-                y="2"
-                width="20"
-                height="20"
-                rx="5"
-                stroke="url(#instagram-gradient-carousel)"
-                strokeWidth="2"
-              />
-              <circle
-                cx="12"
-                cy="12"
-                r="4"
-                stroke="url(#instagram-gradient-carousel)"
-                strokeWidth="2"
-              />
-              <circle
-                cx="18"
-                cy="6"
-                r="1.5"
-                fill="url(#instagram-gradient-carousel)"
-              />
-              <defs>
-                <linearGradient
-                  id="instagram-gradient-carousel"
-                  x1="0%"
-                  y1="100%"
-                  x2="100%"
-                  y2="0%"
-                >
-                  <stop offset="0%" stopColor="#FED576" />
-                  <stop offset="26%" stopColor="#F47133" />
-                  <stop offset="61%" stopColor="#BC3081" />
-                  <stop offset="100%" stopColor="#4F5BD5" />
-                </linearGradient>
-              </defs>
-            </svg>
           </div>
         </div>
       </div>
