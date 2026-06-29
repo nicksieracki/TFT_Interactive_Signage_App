@@ -1,14 +1,16 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSettings } from '../SettingsContext';
 import { useSystem } from '../SystemContext';
 
-const DEFAULT_TIMEOUT_SECS = 60;
+const DEFAULT_TIMEOUT_SECS = 300; // 5 minutes - long enough for iframe interactions
 const IDLE_EVENTS: Array<keyof DocumentEventMap> = [
   'pointerdown',
   'keydown',
   'touchstart',
   'wheel',
+  'click',        // Detect clicks anywhere (including simulated from iframe wrapper)
+  'focusin',      // Detect when elements (including iframes) get focus
 ];
 
 export const useIdle = () => {
@@ -21,35 +23,40 @@ export const useIdle = () => {
 
   const timeoutSecs = settings.get<number>('idle_timeout_secs') || DEFAULT_TIMEOUT_SECS;
 
-  const onIdle = () => {
+  const onIdle = useCallback(() => {
     // Build the home route with system if present
     const homeRoute = system ? `/${system}` : '/';
 
-    // If already at home route, just reset the timer
+    console.log('[useIdle] onIdle triggered:', {
+      system,
+      homeRoute,
+      currentPath: location.pathname
+    });
+
+    // If already at home route, don't navigate
     if (location.pathname === homeRoute) {
-      reset();
       return;
     }
 
     // Navigate to home route
     navigate(homeRoute);
-  };
+  }, [system, location.pathname, navigate]);
 
-  const reset = () => {
+  const reset = useCallback(() => {
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => onIdle(), timeoutSecs * 1000);
-  };
+  }, [onIdle, timeoutSecs]);
 
-  const start = () => {
+  const start = useCallback(() => {
     if (startedRef.current) return;
     startedRef.current = true;
     for (const event of IDLE_EVENTS) {
       document.addEventListener(event, reset, { passive: true });
     }
     reset();
-  };
+  }, [reset]);
 
-  const stop = () => {
+  const stop = useCallback(() => {
     if (!startedRef.current) return;
     startedRef.current = false;
     if (timerRef.current) {
@@ -59,12 +66,12 @@ export const useIdle = () => {
     for (const event of IDLE_EVENTS) {
       document.removeEventListener(event, reset);
     }
-  };
+  }, [reset]);
 
   useEffect(() => {
     start();
     return () => stop();
-  }, [timeoutSecs]);
+  }, [start, stop]);
 
   return { start, stop };
 };
