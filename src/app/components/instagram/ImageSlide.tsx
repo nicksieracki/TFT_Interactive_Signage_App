@@ -82,53 +82,55 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
   const timeAgo = formatRelativeTime(slide.timestamp);
 
   return (
-    <div className="relative h-full w-full overflow-hidden">
-      {/* Blurred background */}
-      <div
-        className="absolute inset-0 bg-cover bg-center blur-2xl scale-110 opacity-60"
-        style={{
-          backgroundImage: `url(${slide.url})`,
-        }}
-      />
-
-      {/* Dark overlay for better contrast */}
-      <div className="absolute inset-0 bg-black/40" />
-
-      {/* Content container - with padding to clear nav */}
-      <div className="relative flex flex-col h-full w-full pb-[104px]">
-        {/* Timestamp header - minimal height */}
-        <div className="absolute top-4 left-4 z-10">
-          <p className="text-white/80 text-xs font-medium drop-shadow-lg bg-black/30 px-2 py-1 rounded">
-            {timeAgo}
-          </p>
-        </div>
-
-        {/* Image container - takes remaining space */}
-        <div className="flex-1 min-h-0 relative flex items-center justify-center px-4 pt-12">
-          <img
-            src={slide.url}
-            alt={slide.caption || ''}
-            className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
-            onError={onAdvance}
+    <div className="h-full w-full bg-black flex items-center justify-center">
+      {/* Compact player container */}
+      <div className="relative w-full max-w-4xl" style={{ maxHeight: 'calc(100vh - 140px)' }}>
+        {/* Blurred background for the player area */}
+        <div className="absolute inset-0 overflow-hidden rounded-lg">
+          <div
+            className="absolute inset-0 bg-cover bg-center blur-2xl scale-110 opacity-60"
+            style={{
+              backgroundImage: `url(${slide.url})`,
+            }}
           />
+          <div className="absolute inset-0 bg-black/50" />
         </div>
 
-        {/* Caption and branding footer - positioned above nav */}
-        <div className="flex-shrink-0 px-4 py-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-          {slide.caption && (
-            <p className="text-white text-sm leading-snug mb-2 max-h-20 overflow-y-auto drop-shadow-lg line-clamp-3">
-              {slide.caption}
+        {/* Content container */}
+        <div className="relative flex flex-col">
+          {/* Header */}
+          <div className="flex-shrink-0 p-4 bg-gradient-to-b from-black/80 to-transparent">
+            <p className="text-white/90 text-base font-medium drop-shadow-lg">
+              {timeAgo}
             </p>
-          )}
+          </div>
 
-          <div className="flex items-center justify-between">
-            <p className="text-white text-sm font-medium drop-shadow-lg">
-              @{slide.username}
-            </p>
+          {/* Image container - fixed aspect ratio */}
+          <div className="relative flex items-center justify-center px-6" style={{ minHeight: '60vh' }}>
+            <img
+              src={slide.url}
+              alt={slide.caption || ''}
+              className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
+              onError={onAdvance}
+            />
+          </div>
 
-            {/* Instagram icon */}
-            <svg
-              className="w-6 h-6 drop-shadow-lg"
+          {/* Footer */}
+          <div className="flex-shrink-0 p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
+            {slide.caption && (
+              <p className="text-white text-base leading-relaxed mb-3 max-h-24 overflow-y-auto drop-shadow-lg line-clamp-3">
+                {slide.caption}
+              </p>
+            )}
+
+            <div className="flex items-center justify-between">
+              <p className="text-white text-base font-medium drop-shadow-lg">
+                @{slide.username}
+              </p>
+
+              {/* Instagram icon */}
+              <svg
+                className="w-7 h-7 drop-shadow-lg"
               viewBox="0 0 24 24"
               fill="none"
             >
@@ -169,6 +171,7 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
                 </linearGradient>
               </defs>
             </svg>
+            </div>
           </div>
         </div>
       </div>

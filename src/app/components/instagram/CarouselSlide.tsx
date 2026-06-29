@@ -210,41 +210,43 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
   const blurSource = currentChild.thumbnail || currentChild.url;
 
   return (
-    <div className="relative h-full w-full overflow-hidden">
-      {/* Blurred background */}
-      {currentChild.type === 'image' || currentChild.thumbnail ? (
-        <div
-          className="absolute inset-0 bg-cover bg-center blur-2xl scale-110 opacity-60"
-          style={{
-            backgroundImage: `url(${blurSource})`,
-          }}
-        />
-      ) : (
-        <video
-          ref={backgroundVideoRef}
-          src={currentChild.url}
-          className="absolute inset-0 w-full h-full object-cover blur-2xl scale-110 opacity-60"
-          autoPlay
-          muted
-          loop
-          playsInline
-        />
-      )}
-
-      {/* Dark overlay for better contrast */}
-      <div className="absolute inset-0 bg-black/40" />
-
-      {/* Content container - with padding to clear nav */}
-      <div className="relative flex flex-col h-full w-full pb-[104px]">
-        {/* Timestamp header - minimal height */}
-        <div className="absolute top-4 left-4 z-10">
-          <p className="text-white/80 text-xs font-medium drop-shadow-lg bg-black/30 px-2 py-1 rounded">
-            {timeAgo}
-          </p>
+    <div className="h-full w-full bg-black flex items-center justify-center">
+      {/* Compact player container */}
+      <div className="relative w-full max-w-4xl" style={{ maxHeight: 'calc(100vh - 140px)' }}>
+        {/* Blurred background for the player area */}
+        <div className="absolute inset-0 overflow-hidden rounded-lg">
+          {currentChild.type === 'image' || currentChild.thumbnail ? (
+            <div
+              className="absolute inset-0 bg-cover bg-center blur-2xl scale-110 opacity-60"
+              style={{
+                backgroundImage: `url(${blurSource})`,
+              }}
+            />
+          ) : (
+            <video
+              ref={backgroundVideoRef}
+              src={currentChild.url}
+              className="absolute inset-0 w-full h-full object-cover blur-2xl scale-110 opacity-60"
+              autoPlay
+              muted
+              loop
+              playsInline
+            />
+          )}
+          <div className="absolute inset-0 bg-black/50" />
         </div>
 
-        {/* Media container with carousel indicators */}
-        <div className="flex-1 min-h-0 relative flex items-center justify-center px-4 pt-12">
+        {/* Content container */}
+        <div className="relative flex flex-col">
+          {/* Header */}
+          <div className="flex-shrink-0 p-4 bg-gradient-to-b from-black/80 to-transparent">
+            <p className="text-white/90 text-base font-medium drop-shadow-lg">
+              {timeAgo}
+            </p>
+          </div>
+
+          {/* Media container with carousel indicators */}
+          <div className="relative flex items-center justify-center px-6" style={{ minHeight: '60vh' }}>
           {/* Carousel indicators at top */}
           {validChildren.length > 1 && (
             <div className="absolute top-2 left-4 right-4 flex justify-center gap-1 z-10">
