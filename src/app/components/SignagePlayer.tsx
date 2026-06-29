@@ -1,13 +1,12 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useParams } from 'react-router-dom';
 import { Icon } from './Icon';
 
 interface SignagePlayerProps {
   hide?: boolean;
+  system?: string;
 }
 
-export const SignagePlayer: React.FC<SignagePlayerProps> = ({ hide = false }) => {
-  const { system } = useParams<{ system?: string }>();
+export const SignagePlayer: React.FC<SignagePlayerProps> = ({ hide = false, system }) => {
   const frameRef = useRef<HTMLIFrameElement>(null);
 
   const signageUrl = '/signage'; // Default signage URL

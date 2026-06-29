@@ -20,19 +20,21 @@ const AppContent: React.FC = () => {
   const navigate = useNavigate();
 
   // Extract system from current pathname since useParams doesn't work outside Routes
-  const getSystemFromPath = () => {
+  const getSystemFromPath = (): string | undefined => {
     const segments = location.pathname.split('/').filter(Boolean);
-    if (segments.length === 0) return null;
+    if (segments.length === 0) return undefined;
 
     const firstSegment = segments[0];
     // If first segment is not a valid page, it's the system ID
     if (!VALID_PAGES.includes(firstSegment as ValidPage)) {
       return firstSegment;
     }
-    return null;
+    return undefined;
   };
 
   const system = getSystemFromPath();
+
+  console.log('[AppContent] System ID:', system, 'from path:', location.pathname);
 
   // Nav is always visible when not in signage mode, no need for show/hide state
 
@@ -111,7 +113,7 @@ const AppContent: React.FC = () => {
         <div className="flex h-full w-full">
           {/* Left half - Always shows signage (960x1080) */}
           <div className="w-1/2 h-full relative">
-            <SignagePlayer hide={false} />
+            <SignagePlayer hide={false} system={system} />
           </div>
 
           {/* Right half - Shows current route (960x1080) */}
@@ -140,7 +142,7 @@ const AppContent: React.FC = () => {
       ) : (
         // Vertical full-screen layout
         <>
-          <SignagePlayer hide={shouldHideSignage} />
+          <SignagePlayer hide={shouldHideSignage} system={system} />
           <div className={`absolute inset-0 z-10 ${!shouldHideSignage ? 'pointer-events-none' : ''}`}>
               <Routes>
                 {/* Routes without system */}
