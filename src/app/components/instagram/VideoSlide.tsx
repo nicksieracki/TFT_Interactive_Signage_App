@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Slide } from '../../types/instagram';
 
 interface VideoSlideProps {
@@ -60,6 +60,30 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
+  const [videoNeedsRotation, setVideoNeedsRotation] = useState(false);
+
+  // Detect if video is vertical and needs rotation
+  const handleVideoMetadata = () => {
+    if (videoRef.current) {
+      const video = videoRef.current;
+      const isVideoVertical = video.videoHeight > video.videoWidth;
+
+      // TEST MODE: Force rotation for testing - remove this line in production
+      const FORCE_ROTATION_TEST = window.location.search.includes('test-rotation');
+
+      // Apply rotation only for vertical videos when app is in vertical mode
+      // This compensates for display hardware treating vertical video as landscape
+      setVideoNeedsRotation((isVideoVertical && !isHorizontal) || FORCE_ROTATION_TEST);
+
+      console.log('[VideoSlide] Video dimensions:', {
+        width: video.videoWidth,
+        height: video.videoHeight,
+        isVertical: isVideoVertical,
+        needsRotation: (isVideoVertical && !isHorizontal) || FORCE_ROTATION_TEST,
+        forceRotationTest: FORCE_ROTATION_TEST,
+      });
+    }
+  };
 
   useEffect(() => {
     if (!slide.url) {
@@ -140,9 +164,19 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
               src={slide.url}
               poster={slide.thumbnail}
               className="max-h-full max-w-full object-contain drop-shadow-2xl"
+              style={
+                videoNeedsRotation
+                  ? {
+                      transform: 'rotate(90deg)',
+                      maxWidth: 'calc(100vh - 320px)',
+                      maxHeight: '100%',
+                    }
+                  : undefined
+              }
               autoPlay
               muted
               playsInline
+              onLoadedMetadata={handleVideoMetadata}
               onEnded={handleVideoEnded}
               onError={handleVideoError}
             />
@@ -254,10 +288,23 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
               ref={videoRef}
               src={slide.url}
               poster={slide.thumbnail}
-              className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
+              className={`object-contain rounded-lg shadow-2xl ${
+                videoNeedsRotation ? '' : 'max-h-full max-w-full'
+              }`}
+              style={
+                videoNeedsRotation
+                  ? {
+                      transform: 'rotate(90deg)',
+                      // When rotated, swap the max dimensions
+                      maxWidth: '70vh',
+                      maxHeight: '100vw',
+                    }
+                  : undefined
+              }
               autoPlay
               muted
               playsInline
+              onLoadedMetadata={handleVideoMetadata}
               onEnded={handleVideoEnded}
               onError={handleVideoError}
             />

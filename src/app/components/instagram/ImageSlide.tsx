@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Slide } from '../../types/instagram';
 
 interface ImageSlideProps {
@@ -58,6 +58,32 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
   duration = 10000,
   isHorizontal = false,
 }) => {
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [imageNeedsRotation, setImageNeedsRotation] = useState(false);
+
+  // Detect if image is vertical and needs rotation
+  const handleImageLoad = () => {
+    if (imgRef.current) {
+      const img = imgRef.current;
+      const isImageVertical = img.naturalHeight > img.naturalWidth;
+
+      // TEST MODE: Force rotation for testing - remove this line in production
+      const FORCE_ROTATION_TEST = window.location.search.includes('test-rotation');
+
+      // Apply rotation only for vertical images when app is in vertical mode
+      // This compensates for display hardware treating vertical content as landscape
+      setImageNeedsRotation((isImageVertical && !isHorizontal) || FORCE_ROTATION_TEST);
+
+      console.log('[ImageSlide] Image dimensions:', {
+        width: img.naturalWidth,
+        height: img.naturalHeight,
+        isVertical: isImageVertical,
+        needsRotation: (isImageVertical && !isHorizontal) || FORCE_ROTATION_TEST,
+        forceRotationTest: FORCE_ROTATION_TEST,
+      });
+    }
+  };
+
   useEffect(() => {
     if (!slide.url) {
       console.log('[ImageSlide] No URL, advancing immediately');
@@ -110,9 +136,20 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
           {/* Image container - flex-1 with max height constraint */}
           <div className="flex-1 flex items-center justify-center min-h-0" style={{ maxHeight: 'calc(100vh - 320px)' }}>
             <img
+              ref={imgRef}
               src={slide.url}
               alt={slide.caption || ''}
               className="max-h-full max-w-full object-contain drop-shadow-2xl"
+              style={
+                imageNeedsRotation
+                  ? {
+                      transform: 'rotate(90deg)',
+                      maxWidth: 'calc(100vh - 320px)',
+                      maxHeight: '100%',
+                    }
+                  : undefined
+              }
+              onLoad={handleImageLoad}
               onError={onAdvance}
             />
           </div>
@@ -208,9 +245,23 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
           {/* Image container - larger */}
           <div className="relative flex items-center justify-center px-8" style={{ minHeight: '70vh' }}>
             <img
+              ref={imgRef}
               src={slide.url}
               alt={slide.caption || ''}
-              className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
+              className={`object-contain rounded-lg shadow-2xl ${
+                imageNeedsRotation ? '' : 'max-h-full max-w-full'
+              }`}
+              style={
+                imageNeedsRotation
+                  ? {
+                      transform: 'rotate(90deg)',
+                      // When rotated, swap the max dimensions
+                      maxWidth: '70vh',
+                      maxHeight: '100vw',
+                    }
+                  : undefined
+              }
+              onLoad={handleImageLoad}
               onError={onAdvance}
             />
           </div>
