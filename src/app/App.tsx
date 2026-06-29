@@ -104,7 +104,7 @@ const AppContent: React.FC = () => {
             <div className="flex-1 overflow-hidden">
               <Routes>
                 {/* Routes without system */}
-                <Route path="/" element={<div className="h-full w-full bg-black flex items-center justify-center text-white text-2xl">Select a page from the navigation</div>} />
+                <Route path="/" element={<DirectoryPage />} />
                 <Route path="/directory" element={<DirectoryPage />} />
                 <Route path="/wayfinding" element={<WayfindingPage />} />
                 <Route path="/events" element={<EventsPage />} />
@@ -112,7 +112,7 @@ const AppContent: React.FC = () => {
                 <Route path="/game" element={<GamePage />} />
 
                 {/* Routes with system */}
-                <Route path="/:system" element={<div className="h-full w-full bg-black flex items-center justify-center text-white text-2xl">Select a page from the navigation</div>} />
+                <Route path="/:system" element={<DirectoryPage />} />
                 <Route path="/:system/directory" element={<DirectoryPage />} />
                 <Route path="/:system/wayfinding" element={<WayfindingPage />} />
                 <Route path="/:system/events" element={<EventsPage />} />
