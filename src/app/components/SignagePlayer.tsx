@@ -15,24 +15,29 @@ export const SignagePlayer: React.FC<SignagePlayerProps> = ({ hide = false }) =>
   const embedUrl = useMemo(() => {
     const base = signageUrl.replace(/\/$/, '');
 
-    // Extract API key from current URL hash fragment
-    // Only pass API key to same-origin signage app for security
+    // In development or when using OAuth, the signage app should share the same session
+    // Only pass API key when it's present (for kiosk/display deployments)
     const hashParts = window.location.hash.split('?');
     let apiKeyParam = '';
 
-    // Security check: only pass API key to relative URLs (same origin)
-    if (!signageUrl.startsWith('http') && hashParts.length > 1 && hashParts[1]?.includes('x-api-key=')) {
-      // Extract only the API key parameter, not other potentially sensitive params
+    // Only add API key if present and for same-origin URLs
+    if (!signageUrl.startsWith('http') && hashParts.length > 1) {
       const params = new URLSearchParams(hashParts[1]);
       const apiKey = params.get('x-api-key');
       if (apiKey) {
+        // API key is present, add it to the iframe URL for kiosk mode
         apiKeyParam = `?x-api-key=${encodeURIComponent(apiKey)}`;
       }
+      // If no API key, the iframe will use the shared OAuth session (cookies)
     }
 
-    return system
+    const url = system
       ? `${base}/#/signage/${encodeURIComponent(system)}${apiKeyParam}`
       : `${base}/#/signage${apiKeyParam}`;
+
+    console.log('[SignagePlayer] Iframe URL:', url, { system, hasApiKey: !!apiKeyParam });
+
+    return url;
   }, [signageUrl, system]);
 
   useEffect(() => {
@@ -57,7 +62,9 @@ export const SignagePlayer: React.FC<SignagePlayerProps> = ({ hide = false }) =>
       src={embedUrl}
       className={`h-full w-full border-0 ${hide ? 'invisible' : ''}`}
       allow="autoplay; fullscreen; clipboard-read; clipboard-write"
-      referrerPolicy="no-referrer"
+      // Use same-origin to allow cookie/session sharing in development
+      // This allows the iframe to share the OAuth session with the parent
+      referrerPolicy="same-origin"
       title="PlaceOS Signage"
     />
   );
