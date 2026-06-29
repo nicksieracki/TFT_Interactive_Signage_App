@@ -11,32 +11,28 @@ type FloorMap = {
 
 const FLOOR_MAPS: FloorMap[] = [
   {
-    id: 'melnitz-2',
-    name: 'Melnitz Hall Floor 2',
-    shortName: 'Melnitz F2',
+    id: 'melnitz-1',
+    name: 'Melnitz Hall',
+    shortName: 'Melnitz',
     imagePath: 'img/melnitz-map-2-colloquial.png',
-    icon: 'apartment',
   },
   {
-    id: 'east-melnitz',
-    name: 'East Melnitz',
-    shortName: 'East Melnitz',
-    imagePath: 'img/east-melnitz-colloquial.png',
-    icon: 'east',
+    id: 'east-melnitz-1',
+    name: 'East Melnitz Floor 1',
+    shortName: 'East Melnitz F1',
+    imagePath: 'img/east-melnitz-map-2-colloquial.png',
   },
   {
     id: 'east-melnitz-2',
     name: 'East Melnitz Floor 2',
     shortName: 'East Melnitz F2',
-    imagePath: 'img/east-melnitz-map-2-colloquial.png',
-    icon: 'stairs',
+    imagePath: 'img/east-melnitz-colloquial.png',
   },
   {
-    id: 'macgowan-2',
-    name: 'Macgowan Hall Floor 2',
-    shortName: 'Macgowan F2',
+    id: 'macgowan-1',
+    name: 'Macgowan Hall',
+    shortName: 'Macgowan F1',
     imagePath: 'img/macgowan-map-2-colloquial.png',
-    icon: 'school',
   },
 ];
 
