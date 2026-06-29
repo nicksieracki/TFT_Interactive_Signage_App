@@ -239,23 +239,23 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
         </div>
 
         {/* Content container */}
-        <div className="relative flex-1 flex flex-col">
-          {/* Header - floating over media */}
-          <div className="absolute top-0 left-0 right-0 p-6 bg-gradient-to-b from-black/80 to-transparent z-10">
-            <p className="text-white/90 text-sm font-medium drop-shadow-lg">
+        <div className="relative flex-1 flex flex-col p-8 pb-[104px]">
+          {/* Header */}
+          <div className="flex-shrink-0 mb-4">
+            <p className="text-white/90 text-xl font-medium drop-shadow-lg">
               {timeAgo}
             </p>
           </div>
 
-          {/* Media container with carousel indicators - full height */}
-          <div className="flex-1 flex items-center justify-center px-8 pb-[104px]">
+          {/* Media container with carousel indicators - flex-1 to take remaining space */}
+          <div className="relative flex-1 flex items-center justify-center min-h-0">
             {/* Carousel indicators at top */}
             {validChildren.length > 1 && (
-              <div className="absolute top-16 left-8 right-8 flex justify-center gap-1 z-10">
+              <div className="absolute top-3 left-0 right-0 flex justify-center gap-2 z-10">
                 {validChildren.map((_, index) => (
                   <div
                     key={index}
-                    className={`h-1 flex-1 max-w-20 rounded-full transition-all duration-500 ${
+                    className={`h-1.5 flex-1 max-w-24 rounded-full transition-all duration-500 ${
                       index === currentChildIndex
                         ? 'bg-white shadow-lg'
                         : 'bg-white/30'
@@ -290,30 +290,30 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
 
             {/* Page counter */}
             {validChildren.length > 1 && (
-              <div className="absolute bottom-4 right-8 bg-black/50 backdrop-blur-sm px-2 py-1 rounded-full">
-                <p className="text-white/90 text-xs font-medium">
+              <div className="absolute bottom-4 right-6 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full">
+                <p className="text-white/90 text-lg font-medium">
                   {currentChildIndex + 1} / {validChildren.length}
                 </p>
               </div>
             )}
           </div>
 
-          {/* Footer - floating over media */}
-          <div className="absolute bottom-0 left-0 right-0 pb-[104px] px-6 bg-gradient-to-t from-black/90 via-black/60 to-transparent z-10">
+          {/* Footer - always visible below media */}
+          <div className="flex-shrink-0 mt-4">
             {slide.caption && (
-              <p className="text-white text-sm leading-snug mb-2 max-h-20 overflow-y-auto drop-shadow-lg line-clamp-3">
+              <p className="text-white text-xl leading-relaxed mb-3 max-h-32 overflow-y-auto drop-shadow-lg line-clamp-3">
                 {slide.caption}
               </p>
             )}
 
             <div className="flex items-center justify-between">
-              <p className="text-white text-sm font-medium drop-shadow-lg">
+              <p className="text-white text-xl font-medium drop-shadow-lg">
                 @{slide.username}
               </p>
 
               {/* Instagram icon */}
               <svg
-                className="w-6 h-6 drop-shadow-lg"
+                className="w-10 h-10 drop-shadow-lg"
                 viewBox="0 0 24 24"
                 fill="none"
               >
@@ -361,11 +361,11 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
     );
   }
 
-  // Vertical layout - compact with letterboxing
+  // Vertical layout - larger with bigger text for 55" display
   return (
     <div className="h-full w-full bg-black flex items-center justify-center">
-      {/* Compact player container */}
-      <div className="relative w-full max-w-4xl" style={{ maxHeight: 'calc(100vh - 140px)' }}>
+      {/* Larger player container */}
+      <div className="relative w-full max-w-5xl" style={{ maxHeight: 'calc(100vh - 80px)' }}>
         {/* Blurred background for the player area */}
         <div className="absolute inset-0 overflow-hidden rounded-lg">
           {currentChild.type === 'image' || currentChild.thumbnail ? (
@@ -392,21 +392,21 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
         {/* Content container */}
         <div className="relative flex flex-col">
           {/* Header */}
-          <div className="flex-shrink-0 p-4 bg-gradient-to-b from-black/80 to-transparent">
-            <p className="text-white/90 text-base font-medium drop-shadow-lg">
+          <div className="flex-shrink-0 p-6 bg-gradient-to-b from-black/80 to-transparent">
+            <p className="text-white/90 text-xl font-medium drop-shadow-lg">
               {timeAgo}
             </p>
           </div>
 
-          {/* Media container with carousel indicators */}
-          <div className="relative flex items-center justify-center px-6" style={{ minHeight: '60vh' }}>
+          {/* Media container with carousel indicators - larger */}
+          <div className="relative flex items-center justify-center px-8" style={{ minHeight: '70vh' }}>
             {/* Carousel indicators at top */}
             {validChildren.length > 1 && (
-              <div className="absolute top-2 left-4 right-4 flex justify-center gap-1 z-10">
+              <div className="absolute top-3 left-6 right-6 flex justify-center gap-2 z-10">
                 {validChildren.map((_, index) => (
                   <div
                     key={index}
-                    className={`h-1 flex-1 max-w-20 rounded-full transition-all duration-500 ${
+                    className={`h-1.5 flex-1 max-w-24 rounded-full transition-all duration-500 ${
                       index === currentChildIndex
                         ? 'bg-white shadow-lg'
                         : 'bg-white/30'
@@ -441,8 +441,8 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
 
             {/* Page counter */}
             {validChildren.length > 1 && (
-              <div className="absolute bottom-2 right-4 bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full">
-                <p className="text-white/90 text-sm font-medium">
+              <div className="absolute bottom-4 right-6 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full">
+                <p className="text-white/90 text-lg font-medium">
                   {currentChildIndex + 1} / {validChildren.length}
                 </p>
               </div>
@@ -450,21 +450,21 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="flex-shrink-0 p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
+          <div className="flex-shrink-0 p-6 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
             {slide.caption && (
-              <p className="text-white text-base leading-relaxed mb-3 max-h-24 overflow-y-auto drop-shadow-lg line-clamp-3">
+              <p className="text-white text-xl leading-relaxed mb-4 max-h-32 overflow-y-auto drop-shadow-lg line-clamp-3">
                 {slide.caption}
               </p>
             )}
 
             <div className="flex items-center justify-between">
-              <p className="text-white text-base font-medium drop-shadow-lg">
+              <p className="text-white text-xl font-medium drop-shadow-lg">
                 @{slide.username}
               </p>
 
               {/* Instagram icon */}
               <svg
-                className="w-7 h-7 drop-shadow-lg"
+                className="w-10 h-10 drop-shadow-lg"
                 viewBox="0 0 24 24"
                 fill="none"
               >

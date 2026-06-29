@@ -125,16 +125,16 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
         </div>
 
         {/* Content container */}
-        <div className="relative flex-1 flex flex-col">
-          {/* Header - floating over video */}
-          <div className="absolute top-0 left-0 right-0 p-6 bg-gradient-to-b from-black/80 to-transparent z-10">
-            <p className="text-white/90 text-sm font-medium drop-shadow-lg">
+        <div className="relative flex-1 flex flex-col p-8 pb-[104px]">
+          {/* Header */}
+          <div className="flex-shrink-0 mb-4">
+            <p className="text-white/90 text-xl font-medium drop-shadow-lg">
               {timeAgo}
             </p>
           </div>
 
-          {/* Video container - full height */}
-          <div className="flex-1 flex items-center justify-center px-8 pb-[104px]">
+          {/* Video container - flex-1 to take remaining space */}
+          <div className="flex-1 flex items-center justify-center min-h-0">
             <video
               ref={videoRef}
               src={slide.url}
@@ -148,22 +148,22 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
             />
           </div>
 
-          {/* Footer - floating over video */}
-          <div className="absolute bottom-0 left-0 right-0 pb-[104px] px-6 bg-gradient-to-t from-black/90 via-black/60 to-transparent z-10">
+          {/* Footer - always visible below video */}
+          <div className="flex-shrink-0 mt-4">
             {slide.caption && (
-              <p className="text-white text-sm leading-snug mb-2 max-h-20 overflow-y-auto drop-shadow-lg line-clamp-3">
+              <p className="text-white text-xl leading-relaxed mb-3 max-h-32 overflow-y-auto drop-shadow-lg line-clamp-3">
                 {slide.caption}
               </p>
             )}
 
             <div className="flex items-center justify-between">
-              <p className="text-white text-sm font-medium drop-shadow-lg">
+              <p className="text-white text-xl font-medium drop-shadow-lg">
                 @{slide.username}
               </p>
 
               {/* Instagram icon */}
               <svg
-                className="w-6 h-6 drop-shadow-lg"
+                className="w-10 h-10 drop-shadow-lg"
                 viewBox="0 0 24 24"
                 fill="none"
               >
@@ -211,11 +211,11 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
     );
   }
 
-  // Vertical layout - compact with letterboxing
+  // Vertical layout - larger with bigger text for 55" display
   return (
     <div className="h-full w-full bg-black flex items-center justify-center">
-      {/* Compact player container */}
-      <div className="relative w-full max-w-4xl" style={{ maxHeight: 'calc(100vh - 140px)' }}>
+      {/* Larger player container */}
+      <div className="relative w-full max-w-5xl" style={{ maxHeight: 'calc(100vh - 80px)' }}>
         {/* Blurred background for the player area */}
         <div className="absolute inset-0 overflow-hidden rounded-lg">
           {slide.thumbnail ? (
@@ -242,14 +242,14 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
         {/* Content container */}
         <div className="relative flex flex-col">
           {/* Header */}
-          <div className="flex-shrink-0 p-4 bg-gradient-to-b from-black/80 to-transparent">
-            <p className="text-white/90 text-base font-medium drop-shadow-lg">
+          <div className="flex-shrink-0 p-6 bg-gradient-to-b from-black/80 to-transparent">
+            <p className="text-white/90 text-xl font-medium drop-shadow-lg">
               {timeAgo}
             </p>
           </div>
 
-          {/* Video container - fixed aspect ratio */}
-          <div className="relative flex items-center justify-center px-6" style={{ minHeight: '60vh' }}>
+          {/* Video container - larger */}
+          <div className="relative flex items-center justify-center px-8" style={{ minHeight: '70vh' }}>
             <video
               ref={videoRef}
               src={slide.url}
@@ -264,21 +264,21 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="flex-shrink-0 p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
+          <div className="flex-shrink-0 p-6 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
             {slide.caption && (
-              <p className="text-white text-base leading-relaxed mb-3 max-h-24 overflow-y-auto drop-shadow-lg line-clamp-3">
+              <p className="text-white text-xl leading-relaxed mb-4 max-h-32 overflow-y-auto drop-shadow-lg line-clamp-3">
                 {slide.caption}
               </p>
             )}
 
             <div className="flex items-center justify-between">
-              <p className="text-white text-base font-medium drop-shadow-lg">
+              <p className="text-white text-xl font-medium drop-shadow-lg">
                 @{slide.username}
               </p>
 
               {/* Instagram icon */}
               <svg
-                className="w-7 h-7 drop-shadow-lg"
+                className="w-10 h-10 drop-shadow-lg"
                 viewBox="0 0 24 24"
                 fill="none"
               >
