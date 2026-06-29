@@ -79,9 +79,6 @@ const AppContent: React.FC = () => {
   // In horizontal mode, signage is never hidden
   const shouldHideSignage = isHorizontal ? false : hideSignage;
 
-  // Calculate nav height for content padding (approximate height of nav)
-  const navHeight = hideSignage || isHorizontal ? '104px' : '0px'; // nav is about 104px tall (icon + padding)
-
   return (
     <div className="relative h-full w-full overflow-hidden bg-[var(--mat-sys-surface)]">
       {isHorizontal ? (
@@ -117,13 +114,11 @@ const AppContent: React.FC = () => {
         </div>
       ) : (
         // Vertical full-screen layout with proper content spacing
-        <div className="flex flex-col h-full w-full">
-          <SignagePlayer hide={shouldHideSignage} />
-          <div
-            className={`flex-1 relative ${!shouldHideSignage ? 'pointer-events-none' : ''}`}
-            style={{ paddingBottom: shouldHideSignage ? navHeight : '0px' }}
-          >
-            <div className="absolute inset-0 overflow-hidden">
+        <div className="h-full w-full flex flex-col">
+          {/* Content area that always respects nav height */}
+          <div className="flex-1 relative overflow-hidden pb-[104px]">
+            <SignagePlayer hide={shouldHideSignage} />
+            <div className={`absolute inset-0 ${!shouldHideSignage ? 'pointer-events-none' : ''}`}>
               <Routes>
                 {/* Routes without system */}
                 <Route path="/" element={<SignagePage />} />
@@ -146,12 +141,9 @@ const AppContent: React.FC = () => {
         </div>
       )}
 
-      {/* Navigation bar - fixed position, always visible when not in signage mode */}
+      {/* Navigation bar - fixed position, always visible */}
       <div
-        className={`fixed bottom-0 ${isHorizontal ? 'left-1/2 right-0' : 'left-0 right-0'} flex items-center justify-center p-4 z-50 transition-all duration-300 ease-in-out ${
-          shouldHideSignage || isHorizontal ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
-        }`}
-        style={{ pointerEvents: shouldHideSignage || isHorizontal ? 'auto' : 'none' }}
+        className={`fixed bottom-0 ${isHorizontal ? 'left-1/2 right-0' : 'left-0 right-0'} flex items-center justify-center p-4 z-50 translate-y-0 opacity-100`}
       >
         <nav
           className="flex items-center gap-2 rounded-2xl border border-white/10 bg-gradient-to-r from-gray-900/95 via-black/95 to-gray-900/95 px-3 py-2 text-white shadow-2xl backdrop-blur-xl select-none"
