@@ -107,8 +107,8 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
             </p>
           </div>
 
-          {/* Image container - flex-1 to take remaining space */}
-          <div className="flex-1 flex items-center justify-center min-h-0">
+          {/* Image container - flex-1 with max height constraint */}
+          <div className="flex-1 flex items-center justify-center min-h-0" style={{ maxHeight: 'calc(100vh - 320px)' }}>
             <img
               src={slide.url}
               alt={slide.caption || ''}

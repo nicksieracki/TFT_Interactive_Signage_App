@@ -6,7 +6,7 @@ import { AuthProvider } from './AuthContext';
 import { PlaceOSProvider } from './PlaceOSContext';
 import { SettingsProvider } from './SettingsContext';
 import { SystemProvider, useSystem } from './SystemContext';
-import { useIdle } from './hooks/useIdle';
+// import { useIdle } from './hooks/useIdle';  // Commented out - no automatic return to signage
 import { DirectoryPage } from './pages/DirectoryPage';
 import { EventsPage } from './pages/EventsPage';
 import { GamePage } from './pages/GamePage';
@@ -22,7 +22,7 @@ const AppContent: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { system } = useSystem();
-  useIdle();
+  // useIdle();  // Disabled - no automatic return to signage
 
   // Nav is always visible when not in signage mode, no need for show/hide state
 

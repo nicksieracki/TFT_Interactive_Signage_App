@@ -247,8 +247,8 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
             </p>
           </div>
 
-          {/* Media container with carousel indicators - flex-1 to take remaining space */}
-          <div className="relative flex-1 flex items-center justify-center min-h-0">
+          {/* Media container with carousel indicators - flex-1 with max height constraint */}
+          <div className="relative flex-1 flex items-center justify-center min-h-0" style={{ maxHeight: 'calc(100vh - 320px)' }}>
             {/* Carousel indicators at top */}
             {validChildren.length > 1 && (
               <div className="absolute top-3 left-0 right-0 flex justify-center gap-2 z-10">

@@ -133,8 +133,8 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
             </p>
           </div>
 
-          {/* Video container - flex-1 to take remaining space */}
-          <div className="flex-1 flex items-center justify-center min-h-0">
+          {/* Video container - flex-1 with max height constraint */}
+          <div className="flex-1 flex items-center justify-center min-h-0" style={{ maxHeight: 'calc(100vh - 320px)' }}>
             <video
               ref={videoRef}
               src={slide.url}
