@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Slide } from '../../types/instagram';
 
 interface VideoSlideProps {
@@ -62,37 +62,10 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
-  const [videoNeedsRotation, setVideoNeedsRotation] = useState(false);
 
-  // Detect if video is vertical and needs rotation
-  const handleVideoMetadata = () => {
-    if (videoRef.current) {
-      const video = videoRef.current;
-      const isVideoVertical = video.videoHeight > video.videoWidth;
-
-      // TEST MODE: Force rotation for testing - remove this line in production
-      const FORCE_ROTATION_TEST = window.location.search.includes('test-rotation');
-
-      // Apply rotation only for vertical videos when app is in vertical mode
-      // This compensates for display hardware treating vertical video as landscape
-      setVideoNeedsRotation((isVideoVertical && !isHorizontal) || FORCE_ROTATION_TEST);
-
-      console.log('[VideoSlide] Video dimensions:', {
-        width: video.videoWidth,
-        height: video.videoHeight,
-        isVertical: isVideoVertical,
-        needsRotation: (isVideoVertical && !isHorizontal) || FORCE_ROTATION_TEST,
-        forceRotationTest: FORCE_ROTATION_TEST,
-        debugRotation,
-      });
-    }
-  };
-
-  // Calculate final rotation: auto-rotation + debug rotation
+  // Only use debug rotation (no auto-rotation)
   const getFinalRotation = (): number => {
-    const autoRotation = videoNeedsRotation ? 90 : 0;
-    const debug = debugRotation || 0;
-    return (autoRotation + debug) % 360;
+    return debugRotation || 0;
   };
 
   useEffect(() => {
@@ -186,7 +159,6 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
               autoPlay
               muted
               playsInline
-              onLoadedMetadata={handleVideoMetadata}
               onEnded={handleVideoEnded}
               onError={handleVideoError}
             />
@@ -314,7 +286,6 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
               autoPlay
               muted
               playsInline
-              onLoadedMetadata={handleVideoMetadata}
               onEnded={handleVideoEnded}
               onError={handleVideoError}
             />

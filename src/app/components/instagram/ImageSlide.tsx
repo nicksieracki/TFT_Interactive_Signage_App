@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Slide } from '../../types/instagram';
 
 interface ImageSlideProps {
@@ -61,37 +61,10 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
   debugRotation,
 }) => {
   const imgRef = useRef<HTMLImageElement>(null);
-  const [imageNeedsRotation, setImageNeedsRotation] = useState(false);
 
-  // Detect if image is vertical and needs rotation
-  const handleImageLoad = () => {
-    if (imgRef.current) {
-      const img = imgRef.current;
-      const isImageVertical = img.naturalHeight > img.naturalWidth;
-
-      // TEST MODE: Force rotation for testing - remove this line in production
-      const FORCE_ROTATION_TEST = window.location.search.includes('test-rotation');
-
-      // Apply rotation only for vertical images when app is in vertical mode
-      // This compensates for display hardware treating vertical content as landscape
-      setImageNeedsRotation((isImageVertical && !isHorizontal) || FORCE_ROTATION_TEST);
-
-      console.log('[ImageSlide] Image dimensions:', {
-        width: img.naturalWidth,
-        height: img.naturalHeight,
-        isVertical: isImageVertical,
-        needsRotation: (isImageVertical && !isHorizontal) || FORCE_ROTATION_TEST,
-        forceRotationTest: FORCE_ROTATION_TEST,
-        debugRotation,
-      });
-    }
-  };
-
-  // Calculate final rotation: auto-rotation + debug rotation
+  // Only use debug rotation (no auto-rotation)
   const getFinalRotation = (): number => {
-    const autoRotation = imageNeedsRotation ? 90 : 0;
-    const debug = debugRotation || 0;
-    return (autoRotation + debug) % 360;
+    return debugRotation || 0;
   };
 
   useEffect(() => {
@@ -159,7 +132,6 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
                     }
                   : undefined
               }
-              onLoad={handleImageLoad}
               onError={onAdvance}
             />
           </div>
@@ -271,7 +243,6 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
                     }
                   : undefined
               }
-              onLoad={handleImageLoad}
               onError={onAdvance}
             />
           </div>
