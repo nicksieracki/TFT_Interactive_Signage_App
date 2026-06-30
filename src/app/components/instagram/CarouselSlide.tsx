@@ -62,7 +62,7 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
 }) => {
   // Apply debug rotation if provided
   const getRotationStyle = () => {
-    if (!debugRotation || debugRotation === 0) return undefined;
+    if (debugRotation === undefined || debugRotation === 0) return undefined;
     return { transform: `rotate(${debugRotation}deg)` };
   };
   const [currentChildIndex, setCurrentChildIndex] = useState(0);
