@@ -6,6 +6,7 @@ interface VideoSlideProps {
   onAdvance?: () => void;
   maxVideoDuration?: number; // Optional cap for long videos (e.g., 30s)
   isHorizontal?: boolean;
+  debugRotation?: 0 | 90 | 180 | 270;
 }
 
 /**
@@ -57,6 +58,7 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
   onAdvance,
   maxVideoDuration = 30000,
   isHorizontal = false,
+  debugRotation,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
@@ -81,8 +83,16 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
         isVertical: isVideoVertical,
         needsRotation: (isVideoVertical && !isHorizontal) || FORCE_ROTATION_TEST,
         forceRotationTest: FORCE_ROTATION_TEST,
+        debugRotation,
       });
     }
+  };
+
+  // Calculate final rotation: auto-rotation + debug rotation
+  const getFinalRotation = (): number => {
+    const autoRotation = videoNeedsRotation ? 90 : 0;
+    const debug = debugRotation || 0;
+    return (autoRotation + debug) % 360;
   };
 
   useEffect(() => {
@@ -165,9 +175,9 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
               poster={slide.thumbnail}
               className="max-h-full max-w-full object-contain drop-shadow-2xl"
               style={
-                videoNeedsRotation
+                getFinalRotation() !== 0
                   ? {
-                      transform: 'rotate(90deg)',
+                      transform: `rotate(${getFinalRotation()}deg)`,
                       maxWidth: 'calc(100vh - 320px)',
                       maxHeight: '100%',
                     }
@@ -289,12 +299,12 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
               src={slide.url}
               poster={slide.thumbnail}
               className={`object-contain rounded-lg shadow-2xl ${
-                videoNeedsRotation ? '' : 'max-h-full max-w-full'
+                getFinalRotation() !== 0 ? '' : 'max-h-full max-w-full'
               }`}
               style={
-                videoNeedsRotation
+                getFinalRotation() !== 0
                   ? {
-                      transform: 'rotate(90deg)',
+                      transform: `rotate(${getFinalRotation()}deg)`,
                       // When rotated, swap the max dimensions
                       maxWidth: '70vh',
                       maxHeight: '100vw',

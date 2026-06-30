@@ -6,6 +6,7 @@ interface ImageSlideProps {
   onAdvance?: () => void;
   duration?: number; // Default 10s
   isHorizontal?: boolean;
+  debugRotation?: 0 | 90 | 180 | 270;
 }
 
 /**
@@ -57,6 +58,7 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
   onAdvance,
   duration = 10000,
   isHorizontal = false,
+  debugRotation,
 }) => {
   const imgRef = useRef<HTMLImageElement>(null);
   const [imageNeedsRotation, setImageNeedsRotation] = useState(false);
@@ -80,8 +82,16 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
         isVertical: isImageVertical,
         needsRotation: (isImageVertical && !isHorizontal) || FORCE_ROTATION_TEST,
         forceRotationTest: FORCE_ROTATION_TEST,
+        debugRotation,
       });
     }
+  };
+
+  // Calculate final rotation: auto-rotation + debug rotation
+  const getFinalRotation = (): number => {
+    const autoRotation = imageNeedsRotation ? 90 : 0;
+    const debug = debugRotation || 0;
+    return (autoRotation + debug) % 360;
   };
 
   useEffect(() => {
@@ -141,9 +151,9 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
               alt={slide.caption || ''}
               className="max-h-full max-w-full object-contain drop-shadow-2xl"
               style={
-                imageNeedsRotation
+                getFinalRotation() !== 0
                   ? {
-                      transform: 'rotate(90deg)',
+                      transform: `rotate(${getFinalRotation()}deg)`,
                       maxWidth: 'calc(100vh - 320px)',
                       maxHeight: '100%',
                     }
@@ -249,12 +259,12 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
               src={slide.url}
               alt={slide.caption || ''}
               className={`object-contain rounded-lg shadow-2xl ${
-                imageNeedsRotation ? '' : 'max-h-full max-w-full'
+                getFinalRotation() !== 0 ? '' : 'max-h-full max-w-full'
               }`}
               style={
-                imageNeedsRotation
+                getFinalRotation() !== 0
                   ? {
-                      transform: 'rotate(90deg)',
+                      transform: `rotate(${getFinalRotation()}deg)`,
                       // When rotated, swap the max dimensions
                       maxWidth: '70vh',
                       maxHeight: '100vw',

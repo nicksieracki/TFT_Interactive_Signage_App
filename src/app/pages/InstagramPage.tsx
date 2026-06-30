@@ -7,6 +7,7 @@ export const InstagramPage: React.FC = () => {
   const { system } = useParams<{ system?: string }>();
   const { slides, isConnected, error } = useInstagramSlides(system);
   const [isHorizontal, setIsHorizontal] = useState(() => window.innerWidth > window.innerHeight);
+  const [debugRotation, setDebugRotation] = useState<0 | 90 | 180 | 270>(0);
 
   useEffect(() => {
     const handleResize = () => {
@@ -41,10 +42,63 @@ export const InstagramPage: React.FC = () => {
   }
 
   return (
-    <InstagramSlideshow
-      slides={slides}
-      layoutMode={isHorizontal ? "horizontal" : "vertical"}
-      className="h-full w-full"
-    />
+    <div className="relative h-full w-full">
+      <InstagramSlideshow
+        slides={slides}
+        layoutMode={isHorizontal ? "horizontal" : "vertical"}
+        className="h-full w-full"
+        debugRotation={debugRotation}
+      />
+
+      {/* Debug rotation controls */}
+      <div className="absolute top-4 left-4 z-50 flex flex-col gap-2 bg-black/80 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-2xl">
+        <div className="text-white font-bold text-sm mb-2">Debug Rotation</div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setDebugRotation(0)}
+            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+              debugRotation === 0
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'bg-white/10 text-white/70 hover:bg-white/20'
+            }`}
+          >
+            0°
+          </button>
+          <button
+            onClick={() => setDebugRotation(90)}
+            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+              debugRotation === 90
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'bg-white/10 text-white/70 hover:bg-white/20'
+            }`}
+          >
+            90°
+          </button>
+          <button
+            onClick={() => setDebugRotation(180)}
+            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+              debugRotation === 180
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'bg-white/10 text-white/70 hover:bg-white/20'
+            }`}
+          >
+            180°
+          </button>
+          <button
+            onClick={() => setDebugRotation(270)}
+            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+              debugRotation === 270
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'bg-white/10 text-white/70 hover:bg-white/20'
+            }`}
+          >
+            270°
+          </button>
+        </div>
+        <div className="text-white/60 text-xs mt-1">
+          Current: {debugRotation}° rotation applied
+        </div>
+      </div>
+    </div>
   );
 };

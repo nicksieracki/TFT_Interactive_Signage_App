@@ -10,6 +10,7 @@ import { GamePage } from './pages/GamePage';
 import { InstagramPage } from './pages/InstagramPage';
 import { SignagePage } from './pages/SignagePage';
 import { WayfindingPage } from './pages/WayfindingPage';
+import { useAutoRefresh } from './hooks/useAutoRefresh';
 
 // Define valid pages as a constant for cleaner logic
 const VALID_PAGES = ['directory', 'wayfinding', 'events', 'instagram', 'game'] as const;
@@ -84,8 +85,6 @@ const AppContent: React.FC = () => {
     [activeTab],
   );
 
-  // No longer needed - nav visibility is controlled by whether we're in signage mode
-
   // Simple navigation with system ID in path, preserving query params
   const navigateToPage = (page: string) => {
     // Preserve query parameters from the hash fragment
@@ -99,12 +98,11 @@ const AppContent: React.FC = () => {
     navigate(`${path}${queryParams}`, { replace: true });
   };
 
-  // No longer need touch-to-reveal logic since nav is always visible when needed
-
-  // No touch-to-reveal logic needed anymore - nav is always visible when in navigation mode
-
   // In horizontal mode, signage is never hidden
   const shouldHideSignage = isHorizontal ? false : hideSignage;
+
+  //init autorefresh logic
+  useAutoRefresh();
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-[var(--mat-sys-surface)]">

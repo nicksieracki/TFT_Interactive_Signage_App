@@ -1,6 +1,7 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig, type ProxyOptions } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import { vitePluginVersion } from './vite-plugin-version';
 
 //////////////////////////////////////////////////////////////
 ///////////////////   Proxy Configuration   //////////////////
@@ -57,6 +58,7 @@ export default defineConfig({
         },
       ],
     }),
+    vitePluginVersion(),
   ],
   base: './',
   server: {
