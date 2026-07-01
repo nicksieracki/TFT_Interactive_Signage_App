@@ -6,7 +6,6 @@ interface ImageSlideProps {
   onAdvance?: () => void;
   duration?: number; // Default 10s
   isHorizontal?: boolean;
-  debugRotation?: 0 | 90 | 180 | 270;
 }
 
 /**
@@ -58,14 +57,8 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
   onAdvance,
   duration = 10000,
   isHorizontal = false,
-  debugRotation,
 }) => {
   const imgRef = useRef<HTMLImageElement>(null);
-
-  // Only use debug rotation (no auto-rotation)
-  const getFinalRotation = (): number => {
-    return debugRotation || 0;
-  };
 
   useEffect(() => {
     if (!slide.url) {
@@ -123,15 +116,6 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
               src={slide.url}
               alt={slide.caption || ''}
               className="max-h-full max-w-full object-contain drop-shadow-2xl"
-              style={
-                getFinalRotation() !== 0
-                  ? {
-                      transform: `rotate(${getFinalRotation()}deg)`,
-                      maxWidth: 'calc(100vh - 320px)',
-                      maxHeight: '100%',
-                    }
-                  : undefined
-              }
               onError={onAdvance}
             />
           </div>
@@ -230,19 +214,7 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
               ref={imgRef}
               src={slide.url}
               alt={slide.caption || ''}
-              className={`object-contain rounded-lg shadow-2xl ${
-                getFinalRotation() !== 0 ? '' : 'max-h-full max-w-full'
-              }`}
-              style={
-                getFinalRotation() !== 0
-                  ? {
-                      transform: `rotate(${getFinalRotation()}deg)`,
-                      // When rotated, swap the max dimensions
-                      maxWidth: '70vh',
-                      maxHeight: '100vw',
-                    }
-                  : undefined
-              }
+              className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
               onError={onAdvance}
             />
           </div>

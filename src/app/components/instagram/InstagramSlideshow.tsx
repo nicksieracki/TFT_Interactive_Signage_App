@@ -10,7 +10,6 @@ interface InstagramSlideshowProps {
   slides: Slide[];
   layoutMode?: LayoutMode; // Reserved for future use (vertical/horizontal modes)
   className?: string;
-  debugRotation?: 0 | 90 | 180 | 270;
 }
 
 /**
@@ -26,7 +25,6 @@ export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
   slides,
   layoutMode = 'vertical',
   className = '',
-  debugRotation,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const slidesRef = useRef(slides);
@@ -297,11 +295,11 @@ export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
         }
       >
         {currentSlide.type === 'image' && (
-          <ImageSlide key={currentSlide.id} slide={currentSlide} onAdvance={advanceToNextSlide} isHorizontal={layoutMode === 'horizontal'} debugRotation={debugRotation} />
+          <ImageSlide key={currentSlide.id} slide={currentSlide} onAdvance={advanceToNextSlide} isHorizontal={layoutMode === 'horizontal'} />
         )}
 
         {currentSlide.type === 'video' && (
-          <VideoSlide key={currentSlide.id} slide={currentSlide} onAdvance={advanceToNextSlide} isHorizontal={layoutMode === 'horizontal'} debugRotation={debugRotation} />
+          <VideoSlide key={currentSlide.id} slide={currentSlide} onAdvance={advanceToNextSlide} isHorizontal={layoutMode === 'horizontal'} />
         )}
 
         {currentSlide.type === 'carousel' && (
@@ -310,7 +308,6 @@ export const InstagramSlideshow: React.FC<InstagramSlideshowProps> = ({
             slide={currentSlide}
             onAdvance={advanceToNextSlide}
             isHorizontal={layoutMode === 'horizontal'}
-            debugRotation={debugRotation}
           />
         )}
       </ErrorBoundary>

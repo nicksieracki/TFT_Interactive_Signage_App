@@ -6,7 +6,6 @@ interface CarouselSlideProps {
   onAdvance?: () => void;
   childDwell?: number; // milliseconds per child (default 5s)
   isHorizontal?: boolean;
-  debugRotation?: 0 | 90 | 180 | 270;
 }
 
 /**
@@ -58,13 +57,7 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
   onAdvance,
   childDwell = 5000,
   isHorizontal = false,
-  debugRotation,
 }) => {
-  // Apply debug rotation if provided
-  const getRotationStyle = () => {
-    if (debugRotation === undefined || debugRotation === 0) return undefined;
-    return { transform: `rotate(${debugRotation}deg)` };
-  };
   const [currentChildIndex, setCurrentChildIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
@@ -278,7 +271,6 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
                 src={currentChild.url}
                 alt={slide.caption || ''}
                 className="max-h-full max-w-full object-contain drop-shadow-2xl"
-                style={getRotationStyle()}
                 onError={handleMediaError}
               />
             ) : (
@@ -288,7 +280,6 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
                 src={currentChild.url}
                 poster={currentChild.thumbnail}
                 className="max-h-full max-w-full object-contain drop-shadow-2xl"
-                style={getRotationStyle()}
                 autoPlay
                 muted
                 playsInline
@@ -431,7 +422,6 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
                 src={currentChild.url}
                 alt={slide.caption || ''}
                 className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
-                style={getRotationStyle()}
                 onError={handleMediaError}
               />
             ) : (
@@ -441,7 +431,6 @@ export const CarouselSlide: React.FC<CarouselSlideProps> = ({
                 src={currentChild.url}
                 poster={currentChild.thumbnail}
                 className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
-                style={getRotationStyle()}
                 autoPlay
                 muted
                 playsInline

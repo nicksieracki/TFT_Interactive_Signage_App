@@ -6,7 +6,6 @@ interface VideoSlideProps {
   onAdvance?: () => void;
   maxVideoDuration?: number; // Optional cap for long videos (e.g., 30s)
   isHorizontal?: boolean;
-  debugRotation?: 0 | 90 | 180 | 270;
 }
 
 /**
@@ -58,15 +57,9 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
   onAdvance,
   maxVideoDuration = 30000,
   isHorizontal = false,
-  debugRotation,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
-
-  // Only use debug rotation (no auto-rotation)
-  const getFinalRotation = (): number => {
-    return debugRotation || 0;
-  };
 
   useEffect(() => {
     if (!slide.url) {
@@ -147,15 +140,6 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
               src={slide.url}
               poster={slide.thumbnail}
               className="max-h-full max-w-full object-contain drop-shadow-2xl"
-              style={
-                getFinalRotation() !== 0
-                  ? {
-                      transform: `rotate(${getFinalRotation()}deg)`,
-                      maxWidth: 'calc(100vh - 320px)',
-                      maxHeight: '100%',
-                    }
-                  : undefined
-              }
               autoPlay
               muted
               playsInline
@@ -270,19 +254,7 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({
               ref={videoRef}
               src={slide.url}
               poster={slide.thumbnail}
-              className={`object-contain rounded-lg shadow-2xl ${
-                getFinalRotation() !== 0 ? '' : 'max-h-full max-w-full'
-              }`}
-              style={
-                getFinalRotation() !== 0
-                  ? {
-                      transform: `rotate(${getFinalRotation()}deg)`,
-                      // When rotated, swap the max dimensions
-                      maxWidth: '70vh',
-                      maxHeight: '100vw',
-                    }
-                  : undefined
-              }
+              className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
               autoPlay
               muted
               playsInline
